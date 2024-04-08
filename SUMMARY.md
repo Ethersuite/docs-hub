@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Marketing Hub API Documentation](index.md)
+* [Marketing Hub API Documentation](README.md)
 * [Obtaining API Credentials](obtaining-api-credentials.md)
 * [Making API Requests](making-api-requests.md)
 
