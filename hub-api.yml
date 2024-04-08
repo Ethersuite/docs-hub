@@ -1,0 +1,6156 @@
+openapi: 3.0.0
+host: "hub-gateway.ethermail.io"
+schemes:
+  - "https"
+paths:
+  /v1/analytics/stats:
+    get:
+      operationId: AnalyticsController_getStats
+      parameters: []
+      responses:
+        '200':
+          description: Returns system-wide kpis for admin Dashboard.
+      tags:
+        - analytics
+      security:
+        - bearer: []
+  /v1/tenants:
+    post:
+      operationId: TenantsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTenantRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Tenant.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTenantResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+    get:
+      operationId: TenantsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Tenants.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/tenants/access-keys:
+    get:
+      operationId: TenantsController_getAccessKeys
+      parameters: []
+      responses:
+        '200':
+          description: Returns the tenants access keys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessKeysResponseDto'
+      tags:
+        - tenants
+      security:
+        - bearer: []
+    post:
+      operationId: TenantsController_generateAccessKeys
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageAccessKeysRequestDto'
+      responses:
+        '200':
+          description: Returns the newly generated access keys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessKeysResponseDto'
+        '201':
+          description: ''
+        '403':
+          description: This action is not permitted.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/tenants/options:
+    get:
+      operationId: TenantsController_getFormOptions
+      parameters: []
+      responses:
+        '200':
+          description: Returns options used in the tenant form.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/tenants/stats:
+    get:
+      operationId: TenantsController_getStats
+      parameters: []
+      responses:
+        '200':
+          description: Returns Tenant stats (kpis).
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/tenants/{id}/resend-welcome-email:
+    get:
+      operationId: TenantsController_sendWelcomeEmail
+      parameters: []
+      responses:
+        '204':
+          description: Resent the welcome email to the tenant.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/tenants/{id}:
+    get:
+      operationId: TenantsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Tenant.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDto'
+        '404':
+          description: The tenant was not found.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+    patch:
+      operationId: TenantsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTenantRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the tenant.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+    delete:
+      operationId: TenantsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the tenant.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/tenants/{id}/settings:
+    patch:
+      operationId: TenantsController_updateSettings
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTenantSettingsDto'
+      responses:
+        '204':
+          description: Update tenant settings.
+      tags:
+        - tenants
+      security:
+        - bearer: []
+  /v1/users:
+    post:
+      operationId: UsersController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created User.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - users
+      security:
+        - bearer: []
+    get:
+      operationId: UsersController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - users
+      security:
+        - bearer: []
+  /v1/users/{id}:
+    get:
+      operationId: UsersController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested User.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '404':
+          description: The User was not found.
+      tags:
+        - users
+      security:
+        - bearer: []
+    patch:
+      operationId: UsersController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the user profile.
+      tags:
+        - users
+      security:
+        - bearer: []
+    delete:
+      operationId: UsersController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the user.
+      tags:
+        - users
+      security:
+        - bearer: []
+  /v1/users/change-password:
+    patch:
+      operationId: UsersController_changePassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDto'
+      responses:
+        '200':
+          description: Returns a success message if the password is successfully changed.
+      tags:
+        - users
+      security:
+        - bearer: []
+  /v1/users/change-email:
+    post:
+      operationId: UsersController_changeEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeEmailDto'
+      responses:
+        '200':
+          description: >-
+            Returns a success message if the email address is successfully
+            changed.
+        '201':
+          description: ''
+      tags:
+        - users
+      security:
+        - bearer: []
+  /v1/users/{id}/send-confirmation-email:
+    patch:
+      operationId: UsersController_sendConfirmEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendConfirmEmailRequestDto'
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Resent the confirmation email to the user.
+      tags:
+        - users
+      security:
+        - bearer: []
+  /v1/contacts:
+    post:
+      operationId: ContactsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Contact.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateContactResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - contacts
+      security:
+        - bearer: []
+    get:
+      operationId: ContactsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+        - name: listId
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: exportCsv
+          required: false
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Returns a list (page) of Contacts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - contacts
+      security:
+        - bearer: []
+    delete:
+      operationId: ContactsController_bulkRemove
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkDeleteContactsRequestDto'
+      responses:
+        '204':
+          description: Deleted the Contacts.
+      tags:
+        - contacts
+      security:
+        - bearer: []
+  /v1/contacts/import:
+    post:
+      operationId: ContactsController_import
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - contacts
+      security:
+        - bearer: []
+  /v1/contacts/sync:
+    post:
+      operationId: ContactsController_addToSyncBuffer
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - contacts
+      security:
+        - bearer: []
+  /v1/contacts/{id}:
+    get:
+      operationId: ContactsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Contact.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDto'
+        '404':
+          description: The contact was not found.
+      tags:
+        - contacts
+      security:
+        - bearer: []
+    patch:
+      operationId: ContactsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContactRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the Contact.
+      tags:
+        - contacts
+      security:
+        - bearer: []
+    delete:
+      operationId: ContactsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Contact.
+      tags:
+        - contacts
+      security:
+        - bearer: []
+  /v1/subscription:
+    post:
+      operationId: SubscriptionController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequestDto'
+      responses:
+        '204':
+          description: ''
+        '403':
+          description: This action is not permitted.
+      tags:
+        - subscription
+  /v1/templates:
+    post:
+      operationId: TemplatesController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Template.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTemplateResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - templates
+      security:
+        - bearer: []
+    get:
+      operationId: TemplatesController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Templates.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - templates
+      security:
+        - bearer: []
+  /v1/templates/{id}/duplicate:
+    get:
+      operationId: TemplatesController_clone
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '201':
+          description: Duplicates a Template.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTemplateResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - templates
+      security:
+        - bearer: []
+  /v1/templates/{id}:
+    get:
+      operationId: TemplatesController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Template.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateDto'
+        '404':
+          description: The Template was not found.
+      tags:
+        - templates
+      security:
+        - bearer: []
+    patch:
+      operationId: TemplatesController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTemplateRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the Template.
+      tags:
+        - templates
+      security:
+        - bearer: []
+    delete:
+      operationId: TemplatesController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Template.
+      tags:
+        - templates
+      security:
+        - bearer: []
+  /v1/templates/{id}/shared:
+    patch:
+      operationId: TemplatesController_shared
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Share/Unshare the template.
+      tags:
+        - templates
+      security:
+        - bearer: []
+  /v1/emails:
+    post:
+      operationId: EmailsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmailRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateEmailResponseDto'
+      tags:
+        - emails
+      security:
+        - bearer: []
+    get:
+      operationId: EmailsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Emails.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/send-dynamic-ad:
+    post:
+      operationId: EmailsController_sendDynamicAd
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendDynamicAdDto'
+      responses:
+        '201':
+          description: Sends the current active ad to an ethermail user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendDynamicAdDto'
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/stats:
+    get:
+      operationId: EmailsController_getStats
+      parameters: []
+      responses:
+        '200':
+          description: Returns stats (kpis) for a group of Emails.
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/logs:
+    get:
+      operationId: EmailsController_findLogs
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Email logs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/{id}:
+    get:
+      operationId: EmailsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailDto'
+        '404':
+          description: The email was not found.
+      tags:
+        - emails
+      security:
+        - bearer: []
+    patch:
+      operationId: EmailsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEmailRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the Email.
+      tags:
+        - emails
+      security:
+        - bearer: []
+    delete:
+      operationId: EmailsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Email.
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/send-test:
+    post:
+      operationId: EmailsController_sendEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendTestEmailDto'
+      responses:
+        '200':
+          description: Send a test email.
+        '201':
+          description: ''
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/{email_log_id}/track-open:
+    get:
+      operationId: EmailsController_trackOpen
+      parameters:
+        - name: email_log_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/{email_log_id}/track-click/{index}:
+    get:
+      operationId: EmailsController_trackClick
+      parameters:
+        - name: email_log_id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: index
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/{email_log_id}/unsubscribe:
+    get:
+      operationId: EmailsController_unsubscribe
+      parameters:
+        - name: email_log_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/exports/{id}:
+    get:
+      operationId: ExportsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the export job status.
+        '404':
+          description: The export job was not found.
+      tags:
+        - exports
+      security:
+        - bearer: []
+  /v1/transactional-emails:
+    post:
+      operationId: TransactionalEmailsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionalEmailLogRequestDto'
+      responses:
+        '201':
+          description: Send a transactional Email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransactionalEmailLogResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - transactional-emails
+      security:
+        - bearer: []
+    get:
+      operationId: TransactionalEmailsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Transactional Email logs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - transactional-emails
+      security:
+        - bearer: []
+  /v1/transactional-emails/stats:
+    get:
+      operationId: TransactionalEmailsController_getStats
+      parameters: []
+      responses:
+        '200':
+          description: Returns stats (kpis) for a group of Transactional Emails.
+      tags:
+        - transactional-emails
+      security:
+        - bearer: []
+  /v1/transactional-emails/{id}:
+    get:
+      operationId: TransactionalEmailsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Transactional Email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionalEmailLogDto'
+        '404':
+          description: The transactional email was not found.
+      tags:
+        - transactional-emails
+      security:
+        - bearer: []
+  /v1/transactional-emails/{transactional_email_log_id}/track-open:
+    get:
+      operationId: TransactionalEmailsController_trackOpen
+      parameters:
+        - name: transactional_email_log_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - transactional-emails
+      security:
+        - bearer: []
+  /v1/transactional-emails/{transactional_email_log_id}/track-click/{index}:
+    get:
+      operationId: TransactionalEmailsController_trackClick
+      parameters:
+        - name: transactional_email_log_id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: index
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+      tags:
+        - transactional-emails
+      security:
+        - bearer: []
+  /v1/advertising/targeting-options:
+    get:
+      operationId: AdvertisingController_getTargetingFilterOptions
+      parameters: []
+      responses:
+        '200':
+          description: Returns options used in the advertising email targeting rules.
+      tags:
+        - advertising
+      security:
+        - bearer: []
+  /v1/advertising/calculate-reach:
+    post:
+      operationId: AdvertisingController_calculateReach
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateReachRequestDto'
+      responses:
+        '201':
+          description: Returns estimated reach for a target audience.
+        '403':
+          description: This action is not permitted.
+      tags:
+        - advertising
+      security:
+        - bearer: []
+  /v1/segments:
+    post:
+      operationId: SegmentsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSegmentRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Segment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSegmentResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - segments
+      security:
+        - bearer: []
+    get:
+      operationId: SegmentsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Segments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - segments
+      security:
+        - bearer: []
+  /v1/segments/{id}:
+    get:
+      operationId: SegmentsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Segment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SegmentDto'
+        '404':
+          description: The Segment was not found.
+      tags:
+        - segments
+      security:
+        - bearer: []
+    patch:
+      operationId: SegmentsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSegmentRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the segment.
+      tags:
+        - segments
+      security:
+        - bearer: []
+    delete:
+      operationId: SegmentsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the segment.
+      tags:
+        - segments
+      security:
+        - bearer: []
+  /v1/lists:
+    post:
+      operationId: ListsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created List.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateListResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - lists
+      security:
+        - bearer: []
+    get:
+      operationId: ListsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Lists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - lists
+      security:
+        - bearer: []
+  /v1/lists/{id}:
+    get:
+      operationId: ListsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested List.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDto'
+        '404':
+          description: The List was not found.
+      tags:
+        - lists
+      security:
+        - bearer: []
+    patch:
+      operationId: ListsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateListRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the List.
+      tags:
+        - lists
+      security:
+        - bearer: []
+    delete:
+      operationId: ListsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the list.
+      tags:
+        - lists
+      security:
+        - bearer: []
+  /v1/lists/{id}/contacts:
+    patch:
+      operationId: ListsController_addContactsToList
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToListRequestDto'
+      responses:
+        '204':
+          description: Successfully added contacts to List.
+      tags:
+        - lists
+      security:
+        - bearer: []
+    delete:
+      operationId: ListsController_removeContactsFromList
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToListRequestDto'
+      responses:
+        '200':
+          description: ''
+        '204':
+          description: Successfully removed contacts from List.
+      tags:
+        - lists
+      security:
+        - bearer: []
+  /v1/automations:
+    post:
+      operationId: AutomationsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAutomationRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Automation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAutomationResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - automations
+      security:
+        - bearer: []
+    get:
+      operationId: AutomationsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Automations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/stats:
+    get:
+      operationId: AutomationsController_getStats
+      parameters: []
+      responses:
+        '200':
+          description: Returns stats (kpis) for a group of Automations.
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/{id}:
+    get:
+      operationId: AutomationsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Automation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationDto'
+        '404':
+          description: The automation was not found.
+      tags:
+        - automations
+      security:
+        - bearer: []
+    patch:
+      operationId: AutomationsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAutomationRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the Automation.
+      tags:
+        - automations
+      security:
+        - bearer: []
+    delete:
+      operationId: AutomationsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Automation.
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/{id}/status:
+    patch:
+      operationId: AutomationsController_status
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Set Automation status (active or paused).
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/custom-domains:
+    post:
+      operationId: CustomDomainsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomDomainRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Custom Domain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomDomainResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - custom-domains
+      security:
+        - bearer: []
+    get:
+      operationId: CustomDomainsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Custom Domains.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - custom-domains
+      security:
+        - bearer: []
+  /v1/custom-domains/{id}/instructions:
+    get:
+      operationId: CustomDomainsController_getDnsInstructions
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the DNS instructions for the Custom Domain.
+        '404':
+          description: The custom domain was not found.
+      tags:
+        - custom-domains
+      security:
+        - bearer: []
+  /v1/custom-domains/{id}/verify:
+    get:
+      operationId: CustomDomainsController_verify
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the verification status of the Custom Domain.
+        '404':
+          description: The custom domain was not found.
+      tags:
+        - custom-domains
+      security:
+        - bearer: []
+  /v1/custom-domains/{id}:
+    get:
+      operationId: CustomDomainsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Custom Domain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDomainDto'
+        '404':
+          description: The custom domain was not found.
+      tags:
+        - custom-domains
+      security:
+        - bearer: []
+    delete:
+      operationId: CustomDomainsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Custom Domain.
+      tags:
+        - custom-domains
+      security:
+        - bearer: []
+  /v1/smart-contracts:
+    post:
+      operationId: SmartContractsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSmartContractRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Smart Contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSmartContractResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - smart-contracts
+      security:
+        - bearer: []
+    get:
+      operationId: SmartContractsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Smart Contracts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - smart-contracts
+      security:
+        - bearer: []
+  /v1/smart-contracts/{id}:
+    get:
+      operationId: SmartContractsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Smart Contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartContractDto'
+        '404':
+          description: The Smart Contract was not found.
+      tags:
+        - smart-contracts
+      security:
+        - bearer: []
+    delete:
+      operationId: SmartContractsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the smart contract.
+      tags:
+        - smart-contracts
+      security:
+        - bearer: []
+  /v1/smart-contracts/{id}/status:
+    patch:
+      operationId: SmartContractsController_status
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Set Smart contract autoimport status (active or paused).
+      tags:
+        - smart-contracts
+      security:
+        - bearer: []
+  /v1/custom-attributes:
+    post:
+      operationId: CustomAttributesController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomAttributeRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Custom Attribute.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomAttributeResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - custom-attributes
+      security:
+        - bearer: []
+    get:
+      operationId: CustomAttributesController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Custom Attributes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - custom-attributes
+      security:
+        - bearer: []
+  /v1/custom-attributes/{id}:
+    get:
+      operationId: CustomAttributesController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Custom Attribute.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomAttributeDto'
+        '404':
+          description: The Custom Attribute was not found.
+      tags:
+        - custom-attributes
+      security:
+        - bearer: []
+    patch:
+      operationId: CustomAttributesController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomAttributeRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the Custom Attribute.
+      tags:
+        - custom-attributes
+      security:
+        - bearer: []
+    delete:
+      operationId: CustomAttributesController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Custom Attribute.
+      tags:
+        - custom-attributes
+      security:
+        - bearer: []
+  /v1/plans:
+    post:
+      operationId: PlansController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePlanRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Plan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePlanResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - plans
+      security:
+        - bearer: []
+    get:
+      operationId: PlansController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Plans.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - plans
+      security:
+        - bearer: []
+  /v1/plans/{id}:
+    get:
+      operationId: PlansController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the requested Plan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanDto'
+        '404':
+          description: The Plan was not found.
+      tags:
+        - plans
+      security:
+        - bearer: []
+    patch:
+      operationId: PlansController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlanRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the plan profile.
+      tags:
+        - plans
+      security:
+        - bearer: []
+    delete:
+      operationId: PlansController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the plan.
+      tags:
+        - plans
+      security:
+        - bearer: []
+  /v1/files/s3-presigned-url:
+    post:
+      operationId: FilesController_generateS3PresignedUrl
+      parameters: []
+      responses:
+        '200':
+          description: Generates a presigned URL for uploading a file to S3.
+        '201':
+          description: ''
+      tags:
+        - files
+      security:
+        - bearer: []
+  /v1/files:
+    get:
+      operationId: FilesController_listS3Files
+      parameters: []
+      responses:
+        '200':
+          description: List files in an S3 bucket.
+      tags:
+        - files
+      security:
+        - bearer: []
+    delete:
+      operationId: FilesController_deleteS3File
+      parameters: []
+      responses:
+        '200':
+          description: Deletes a file from the S3 bucket for a specific user.
+      tags:
+        - files
+      security:
+        - bearer: []
+  /v1/communities:
+    get:
+      operationId: CommunitiesController_findById
+      parameters: []
+      responses:
+        '200':
+          description: Returns the tenants Community page details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDto'
+        '404':
+          description: The Community was not found.
+      tags:
+        - communities
+      security:
+        - bearer: []
+  /v1/communities/{id}:
+    patch:
+      operationId: CommunitiesController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommunityRequestDto'
+      responses:
+        '204':
+          description: Saved changes to the community profile.
+      tags:
+        - communities
+      security:
+        - bearer: []
+  /v1/widgets:
+    post:
+      operationId: WidgetsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWidgetRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Widget.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWidgetResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - widgets
+      security:
+        - bearer: []
+    get:
+      operationId: WidgetsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Widgets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - widgets
+      security:
+        - bearer: []
+  /v1/widgets/{id}:
+    delete:
+      operationId: WidgetsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the widget.
+      tags:
+        - widgets
+      security:
+        - bearer: []
+  /v1/auth/login:
+    post:
+      operationId: AuthController_signIn
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
+      responses:
+        '200':
+          description: >-
+            Returns a session JWT for the authenticated user along with the user
+            object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDto'
+        '201':
+          description: ''
+      tags:
+        - auth
+  /v1/auth/verify:
+    post:
+      operationId: AuthController_verify
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRequestDto'
+      responses:
+        '200':
+          description: Returns the decoded access token if it's valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResponseDto'
+        '201':
+          description: ''
+      tags:
+        - auth
+  /v1/auth/impersonate:
+    post:
+      operationId: AuthController_impersonate
+      parameters: []
+      responses:
+        '200':
+          description: Returns the decoded access token if it's valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResponseDto'
+        '201':
+          description: ''
+      tags:
+        - auth
+  /v1/auth/reset-password:
+    post:
+      operationId: AuthController_resetPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequestDto'
+      responses:
+        '200':
+          description: Send a password reset link.
+        '201':
+          description: ''
+      tags:
+        - auth
+  /v1/auth/set-new-password:
+    post:
+      operationId: AuthController_setNewPassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetNewPasswordRequestDto'
+      responses:
+        '200':
+          description: Set a new password.
+        '201':
+          description: ''
+      tags:
+        - auth
+info:
+  title: EtherMail EMS API
+  description: API for EtherMail Enterprise Mail Solution
+  version: '1.0'
+  contact: {}
+tags: []
+servers:
+  - url: hub-gateway.ethermail.io
+    description: Production server (uses live data)
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      name: JWT
+      description: Enter JWT token
+      in: header
+    api_key:
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas:
+    ObjectId:
+      type: object
+      properties: {}
+    CreateTenantRequestDto:
+      type: object
+      properties:
+        admin_first_name:
+          type: string
+          description: The admins first name.
+          example: John
+          minLength: 2
+        admin_last_name:
+          type: string
+          description: The admins last name.
+          example: Doe
+          minLength: 2
+        admin_email:
+          type: string
+          description: The admins e-mail address.
+          example: john@acme.com
+        name:
+          type: string
+          description: The tenant organizations name.
+          example: Acme Corporation
+          minLength: 3
+          maxLength: 50
+        afid:
+          description: The tenants affiliate id.
+          example: 65159479ae650bdb53001438
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        address:
+          type: string
+          description: The tenant organizations address.
+          example: 123 Main St, Anytown, USA
+          minLength: 8
+          maxLength: 50
+        city:
+          type: string
+          description: The tenant organizations city.
+          minLength: 3
+          maxLength: 50
+        state:
+          type: string
+          description: The tenant organizations state.
+          minLength: 2
+          maxLength: 50
+        country:
+          type: string
+          description: The tenant organizations country.
+          enum:
+            - af
+            - ax
+            - al
+            - dz
+            - as
+            - ad
+            - ao
+            - ai
+            - aq
+            - ag
+            - ar
+            - am
+            - aw
+            - au
+            - at
+            - az
+            - bs
+            - bh
+            - bd
+            - bb
+            - by
+            - be
+            - bz
+            - bj
+            - bm
+            - bt
+            - bo
+            - bq
+            - ba
+            - bw
+            - bv
+            - br
+            - io
+            - bn
+            - bg
+            - bf
+            - bi
+            - cv
+            - kh
+            - cm
+            - ca
+            - ky
+            - cf
+            - td
+            - cl
+            - cn
+            - cx
+            - cc
+            - co
+            - km
+            - cg
+            - ck
+            - cr
+            - ci
+            - hr
+            - cu
+            - cw
+            - cy
+            - cz
+            - dk
+            - dj
+            - dm
+            - do
+            - ec
+            - eg
+            - sv
+            - gq
+            - er
+            - ee
+            - sz
+            - et
+            - fk
+            - fo
+            - fj
+            - fi
+            - fr
+            - gf
+            - pf
+            - tf
+            - ga
+            - gm
+            - ge
+            - de
+            - gh
+            - gi
+            - gr
+            - gl
+            - gd
+            - gp
+            - gu
+            - gt
+            - gg
+            - gn
+            - gw
+            - gy
+            - ht
+            - hm
+            - va
+            - hn
+            - hk
+            - hu
+            - is
+            - in
+            - id
+            - ir
+            - iq
+            - ie
+            - im
+            - il
+            - it
+            - jm
+            - jp
+            - je
+            - jo
+            - kz
+            - ke
+            - ki
+            - kp
+            - kr
+            - kw
+            - kg
+            - la
+            - lv
+            - lb
+            - ls
+            - lr
+            - ly
+            - li
+            - lt
+            - lu
+            - mo
+            - mg
+            - mw
+            - my
+            - mv
+            - ml
+            - mt
+            - mh
+            - mq
+            - mr
+            - mu
+            - yt
+            - mx
+            - fm
+            - md
+            - mc
+            - mn
+            - me
+            - ms
+            - ma
+            - mz
+            - mm
+            - na
+            - nr
+            - np
+            - nl
+            - nc
+            - nz
+            - ni
+            - ne
+            - ng
+            - nu
+            - nf
+            - mk
+            - mp
+            - 'no'
+            - om
+            - pk
+            - pw
+            - ps
+            - pa
+            - pg
+            - py
+            - pe
+            - ph
+            - pn
+            - pl
+            - pt
+            - pr
+            - qa
+            - re
+            - ro
+            - ru
+            - rw
+            - bl
+            - sh
+            - kn
+            - lc
+            - mf
+            - pm
+            - vc
+            - ws
+            - sm
+            - st
+            - sa
+            - sn
+            - rs
+            - sc
+            - sl
+            - sg
+            - sx
+            - sk
+            - si
+            - sb
+            - so
+            - za
+            - gs
+            - ss
+            - es
+            - lk
+            - sd
+            - sr
+            - sj
+            - se
+            - ch
+            - sy
+            - tw
+            - tj
+            - tz
+            - th
+            - tl
+            - tg
+            - tk
+            - to
+            - tt
+            - tn
+            - tr
+            - tm
+            - tc
+            - tv
+            - ug
+            - ua
+            - ae
+            - gb
+            - us
+            - um
+            - uy
+            - uz
+            - vu
+            - ve
+            - vn
+            - vg
+            - vi
+            - wf
+            - eh
+            - ye
+            - zm
+            - zw
+        postal_code:
+          type: string
+          description: The tenant organizations postal code.
+          minLength: 5
+          maxLength: 10
+        phone:
+          type: string
+          description: The tenant organizations phone number.
+          example: (123) 456-7890
+          minLength: 9
+          maxLength: 10
+        website:
+          type: string
+          description: The tenant organizations website.
+          example: www.acme.com
+        plan_id:
+          description: The tanant organizations plan.
+          example: free
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        is_privileged:
+          type: boolean
+          description: The tanant has privileged access.
+          example: true
+      required:
+        - admin_first_name
+        - admin_last_name
+        - admin_email
+        - name
+        - afid
+        - address
+        - city
+        - state
+        - country
+        - postal_code
+        - phone
+        - website
+        - plan_id
+        - is_privileged
+    CreateTenantResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+          description: The tenant organizations name.
+          example: Acme Corporation
+          minLength: 3
+          maxLength: 50
+        afid:
+          description: The tenants affiliate id.
+          example: 65159479ae650bdb53001438
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        address:
+          type: string
+          description: The tenant organizations address.
+          example: 123 Main St, Anytown, USA
+          minLength: 8
+          maxLength: 50
+        city:
+          type: string
+          description: The tenant organizations city.
+          minLength: 3
+          maxLength: 50
+        state:
+          type: string
+          description: The tenant organizations state.
+          minLength: 2
+          maxLength: 50
+        country:
+          type: string
+          description: The tenant organizations country.
+          enum:
+            - af
+            - ax
+            - al
+            - dz
+            - as
+            - ad
+            - ao
+            - ai
+            - aq
+            - ag
+            - ar
+            - am
+            - aw
+            - au
+            - at
+            - az
+            - bs
+            - bh
+            - bd
+            - bb
+            - by
+            - be
+            - bz
+            - bj
+            - bm
+            - bt
+            - bo
+            - bq
+            - ba
+            - bw
+            - bv
+            - br
+            - io
+            - bn
+            - bg
+            - bf
+            - bi
+            - cv
+            - kh
+            - cm
+            - ca
+            - ky
+            - cf
+            - td
+            - cl
+            - cn
+            - cx
+            - cc
+            - co
+            - km
+            - cg
+            - ck
+            - cr
+            - ci
+            - hr
+            - cu
+            - cw
+            - cy
+            - cz
+            - dk
+            - dj
+            - dm
+            - do
+            - ec
+            - eg
+            - sv
+            - gq
+            - er
+            - ee
+            - sz
+            - et
+            - fk
+            - fo
+            - fj
+            - fi
+            - fr
+            - gf
+            - pf
+            - tf
+            - ga
+            - gm
+            - ge
+            - de
+            - gh
+            - gi
+            - gr
+            - gl
+            - gd
+            - gp
+            - gu
+            - gt
+            - gg
+            - gn
+            - gw
+            - gy
+            - ht
+            - hm
+            - va
+            - hn
+            - hk
+            - hu
+            - is
+            - in
+            - id
+            - ir
+            - iq
+            - ie
+            - im
+            - il
+            - it
+            - jm
+            - jp
+            - je
+            - jo
+            - kz
+            - ke
+            - ki
+            - kp
+            - kr
+            - kw
+            - kg
+            - la
+            - lv
+            - lb
+            - ls
+            - lr
+            - ly
+            - li
+            - lt
+            - lu
+            - mo
+            - mg
+            - mw
+            - my
+            - mv
+            - ml
+            - mt
+            - mh
+            - mq
+            - mr
+            - mu
+            - yt
+            - mx
+            - fm
+            - md
+            - mc
+            - mn
+            - me
+            - ms
+            - ma
+            - mz
+            - mm
+            - na
+            - nr
+            - np
+            - nl
+            - nc
+            - nz
+            - ni
+            - ne
+            - ng
+            - nu
+            - nf
+            - mk
+            - mp
+            - 'no'
+            - om
+            - pk
+            - pw
+            - ps
+            - pa
+            - pg
+            - py
+            - pe
+            - ph
+            - pn
+            - pl
+            - pt
+            - pr
+            - qa
+            - re
+            - ro
+            - ru
+            - rw
+            - bl
+            - sh
+            - kn
+            - lc
+            - mf
+            - pm
+            - vc
+            - ws
+            - sm
+            - st
+            - sa
+            - sn
+            - rs
+            - sc
+            - sl
+            - sg
+            - sx
+            - sk
+            - si
+            - sb
+            - so
+            - za
+            - gs
+            - ss
+            - es
+            - lk
+            - sd
+            - sr
+            - sj
+            - se
+            - ch
+            - sy
+            - tw
+            - tj
+            - tz
+            - th
+            - tl
+            - tg
+            - tk
+            - to
+            - tt
+            - tn
+            - tr
+            - tm
+            - tc
+            - tv
+            - ug
+            - ua
+            - ae
+            - gb
+            - us
+            - um
+            - uy
+            - uz
+            - vu
+            - ve
+            - vn
+            - vg
+            - vi
+            - wf
+            - eh
+            - ye
+            - zm
+            - zw
+        postal_code:
+          type: string
+          description: The tenant organizations postal code.
+          minLength: 5
+          maxLength: 10
+        phone:
+          type: string
+          description: The tenant organizations phone number.
+          example: (123) 456-7890
+          minLength: 9
+          maxLength: 10
+        website:
+          type: string
+          description: The tenant organizations website.
+          example: www.acme.com
+        plan_id:
+          description: The tanant organizations plan.
+          example: free
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        is_privileged:
+          type: boolean
+          description: The tanant has privileged access.
+          example: true
+      required:
+        - _id
+        - name
+        - afid
+        - address
+        - city
+        - state
+        - country
+        - postal_code
+        - phone
+        - website
+        - plan_id
+        - is_privileged
+    TenantDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The tenant organizations name.
+          example: Acme Corporation
+          minLength: 3
+          maxLength: 50
+        afid:
+          description: The tenants affiliate id.
+          example: 65159479ae650bdb53001438
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        address:
+          type: string
+          description: The tenant organizations address.
+          example: 123 Main St, Anytown, USA
+          minLength: 8
+          maxLength: 50
+        city:
+          type: string
+          description: The tenant organizations city.
+          minLength: 3
+          maxLength: 50
+        state:
+          type: string
+          description: The tenant organizations state.
+          minLength: 2
+          maxLength: 50
+        country:
+          type: string
+          description: The tenant organizations country.
+          enum:
+            - af
+            - ax
+            - al
+            - dz
+            - as
+            - ad
+            - ao
+            - ai
+            - aq
+            - ag
+            - ar
+            - am
+            - aw
+            - au
+            - at
+            - az
+            - bs
+            - bh
+            - bd
+            - bb
+            - by
+            - be
+            - bz
+            - bj
+            - bm
+            - bt
+            - bo
+            - bq
+            - ba
+            - bw
+            - bv
+            - br
+            - io
+            - bn
+            - bg
+            - bf
+            - bi
+            - cv
+            - kh
+            - cm
+            - ca
+            - ky
+            - cf
+            - td
+            - cl
+            - cn
+            - cx
+            - cc
+            - co
+            - km
+            - cg
+            - ck
+            - cr
+            - ci
+            - hr
+            - cu
+            - cw
+            - cy
+            - cz
+            - dk
+            - dj
+            - dm
+            - do
+            - ec
+            - eg
+            - sv
+            - gq
+            - er
+            - ee
+            - sz
+            - et
+            - fk
+            - fo
+            - fj
+            - fi
+            - fr
+            - gf
+            - pf
+            - tf
+            - ga
+            - gm
+            - ge
+            - de
+            - gh
+            - gi
+            - gr
+            - gl
+            - gd
+            - gp
+            - gu
+            - gt
+            - gg
+            - gn
+            - gw
+            - gy
+            - ht
+            - hm
+            - va
+            - hn
+            - hk
+            - hu
+            - is
+            - in
+            - id
+            - ir
+            - iq
+            - ie
+            - im
+            - il
+            - it
+            - jm
+            - jp
+            - je
+            - jo
+            - kz
+            - ke
+            - ki
+            - kp
+            - kr
+            - kw
+            - kg
+            - la
+            - lv
+            - lb
+            - ls
+            - lr
+            - ly
+            - li
+            - lt
+            - lu
+            - mo
+            - mg
+            - mw
+            - my
+            - mv
+            - ml
+            - mt
+            - mh
+            - mq
+            - mr
+            - mu
+            - yt
+            - mx
+            - fm
+            - md
+            - mc
+            - mn
+            - me
+            - ms
+            - ma
+            - mz
+            - mm
+            - na
+            - nr
+            - np
+            - nl
+            - nc
+            - nz
+            - ni
+            - ne
+            - ng
+            - nu
+            - nf
+            - mk
+            - mp
+            - 'no'
+            - om
+            - pk
+            - pw
+            - ps
+            - pa
+            - pg
+            - py
+            - pe
+            - ph
+            - pn
+            - pl
+            - pt
+            - pr
+            - qa
+            - re
+            - ro
+            - ru
+            - rw
+            - bl
+            - sh
+            - kn
+            - lc
+            - mf
+            - pm
+            - vc
+            - ws
+            - sm
+            - st
+            - sa
+            - sn
+            - rs
+            - sc
+            - sl
+            - sg
+            - sx
+            - sk
+            - si
+            - sb
+            - so
+            - za
+            - gs
+            - ss
+            - es
+            - lk
+            - sd
+            - sr
+            - sj
+            - se
+            - ch
+            - sy
+            - tw
+            - tj
+            - tz
+            - th
+            - tl
+            - tg
+            - tk
+            - to
+            - tt
+            - tn
+            - tr
+            - tm
+            - tc
+            - tv
+            - ug
+            - ua
+            - ae
+            - gb
+            - us
+            - um
+            - uy
+            - uz
+            - vu
+            - ve
+            - vn
+            - vg
+            - vi
+            - wf
+            - eh
+            - ye
+            - zm
+            - zw
+        postal_code:
+          type: string
+          description: The tenant organizations postal code.
+          minLength: 5
+          maxLength: 10
+        phone:
+          type: string
+          description: The tenant organizations phone number.
+          example: (123) 456-7890
+          minLength: 9
+          maxLength: 10
+        website:
+          type: string
+          description: The tenant organizations website.
+          example: www.acme.com
+        plan_id:
+          description: The tanant organizations plan.
+          example: free
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        is_privileged:
+          type: boolean
+          description: The tanant has privileged access.
+          example: true
+      required:
+        - name
+        - afid
+        - address
+        - city
+        - state
+        - country
+        - postal_code
+        - phone
+        - website
+        - plan_id
+        - is_privileged
+    pageableResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/WidgetDto'
+        pagination:
+          type: object
+          properties:
+            count:
+              required: true
+              type: number
+            pages:
+              required: true
+              type: number
+            starting:
+              required: true
+              type: number
+            ending:
+              required: true
+              type: number
+            previous:
+              required: true
+              type: boolean
+            next:
+              required: true
+              type: boolean
+      required:
+        - records
+        - pagination
+    AccessKeysResponseDto:
+      type: object
+      properties:
+        api_key:
+          type: string
+        api_secret:
+          type: string
+      required:
+        - api_key
+        - api_secret
+    ManageAccessKeysRequestDto:
+      type: object
+      properties:
+        action:
+          type: string
+          description: |-
+            Whether you want to generate/reset, or delete the existing keys.
+            The value must be either 'generate' or 'delete'.
+          example: generate
+          enum:
+            - generate
+            - revoke
+      required:
+        - action
+    UpdateTenantRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The tenant organizations name.
+          example: Acme Corporation
+          minLength: 3
+          maxLength: 50
+        afid:
+          description: The tenants affiliate id.
+          example: 65159479ae650bdb53001438
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        address:
+          type: string
+          description: The tenant organizations address.
+          example: 123 Main St, Anytown, USA
+          minLength: 8
+          maxLength: 50
+        city:
+          type: string
+          description: The tenant organizations city.
+          minLength: 3
+          maxLength: 50
+        state:
+          type: string
+          description: The tenant organizations state.
+          minLength: 2
+          maxLength: 50
+        country:
+          type: string
+          description: The tenant organizations country.
+          enum:
+            - af
+            - ax
+            - al
+            - dz
+            - as
+            - ad
+            - ao
+            - ai
+            - aq
+            - ag
+            - ar
+            - am
+            - aw
+            - au
+            - at
+            - az
+            - bs
+            - bh
+            - bd
+            - bb
+            - by
+            - be
+            - bz
+            - bj
+            - bm
+            - bt
+            - bo
+            - bq
+            - ba
+            - bw
+            - bv
+            - br
+            - io
+            - bn
+            - bg
+            - bf
+            - bi
+            - cv
+            - kh
+            - cm
+            - ca
+            - ky
+            - cf
+            - td
+            - cl
+            - cn
+            - cx
+            - cc
+            - co
+            - km
+            - cg
+            - ck
+            - cr
+            - ci
+            - hr
+            - cu
+            - cw
+            - cy
+            - cz
+            - dk
+            - dj
+            - dm
+            - do
+            - ec
+            - eg
+            - sv
+            - gq
+            - er
+            - ee
+            - sz
+            - et
+            - fk
+            - fo
+            - fj
+            - fi
+            - fr
+            - gf
+            - pf
+            - tf
+            - ga
+            - gm
+            - ge
+            - de
+            - gh
+            - gi
+            - gr
+            - gl
+            - gd
+            - gp
+            - gu
+            - gt
+            - gg
+            - gn
+            - gw
+            - gy
+            - ht
+            - hm
+            - va
+            - hn
+            - hk
+            - hu
+            - is
+            - in
+            - id
+            - ir
+            - iq
+            - ie
+            - im
+            - il
+            - it
+            - jm
+            - jp
+            - je
+            - jo
+            - kz
+            - ke
+            - ki
+            - kp
+            - kr
+            - kw
+            - kg
+            - la
+            - lv
+            - lb
+            - ls
+            - lr
+            - ly
+            - li
+            - lt
+            - lu
+            - mo
+            - mg
+            - mw
+            - my
+            - mv
+            - ml
+            - mt
+            - mh
+            - mq
+            - mr
+            - mu
+            - yt
+            - mx
+            - fm
+            - md
+            - mc
+            - mn
+            - me
+            - ms
+            - ma
+            - mz
+            - mm
+            - na
+            - nr
+            - np
+            - nl
+            - nc
+            - nz
+            - ni
+            - ne
+            - ng
+            - nu
+            - nf
+            - mk
+            - mp
+            - 'no'
+            - om
+            - pk
+            - pw
+            - ps
+            - pa
+            - pg
+            - py
+            - pe
+            - ph
+            - pn
+            - pl
+            - pt
+            - pr
+            - qa
+            - re
+            - ro
+            - ru
+            - rw
+            - bl
+            - sh
+            - kn
+            - lc
+            - mf
+            - pm
+            - vc
+            - ws
+            - sm
+            - st
+            - sa
+            - sn
+            - rs
+            - sc
+            - sl
+            - sg
+            - sx
+            - sk
+            - si
+            - sb
+            - so
+            - za
+            - gs
+            - ss
+            - es
+            - lk
+            - sd
+            - sr
+            - sj
+            - se
+            - ch
+            - sy
+            - tw
+            - tj
+            - tz
+            - th
+            - tl
+            - tg
+            - tk
+            - to
+            - tt
+            - tn
+            - tr
+            - tm
+            - tc
+            - tv
+            - ug
+            - ua
+            - ae
+            - gb
+            - us
+            - um
+            - uy
+            - uz
+            - vu
+            - ve
+            - vn
+            - vg
+            - vi
+            - wf
+            - eh
+            - ye
+            - zm
+            - zw
+        postal_code:
+          type: string
+          description: The tenant organizations postal code.
+          minLength: 5
+          maxLength: 10
+        phone:
+          type: string
+          description: The tenant organizations phone number.
+          example: (123) 456-7890
+          minLength: 9
+          maxLength: 10
+        website:
+          type: string
+          description: The tenant organizations website.
+          example: www.acme.com
+        plan_id:
+          description: The tanant organizations plan.
+          example: free
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        is_privileged:
+          type: boolean
+          description: The tanant has privileged access.
+          example: true
+    UpdateTenantSettingsDto:
+      type: object
+      properties:
+        unsubscribe_text:
+          type: string
+          description: The tenants unsubscribe text.
+          example: Acme Corporation
+          minLength: 3
+          maxLength: 200
+      required:
+        - unsubscribe_text
+    CreateUserRequestDto:
+      type: object
+      properties:
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
+        first_name:
+          type: string
+          example: John
+          minLength: 2
+        last_name:
+          type: string
+          example: Doe
+          minLength: 2
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        email:
+          type: string
+          example: john@acme.com
+        role:
+          type: string
+          description: The users role (can be admin or user)
+          example: admin
+          enum:
+            - editor
+            - marketer
+            - admin
+            - global_admin
+            - super_admin
+        password:
+          type: string
+          example: '123456789'
+          minLength: 9
+      required:
+        - first_name
+        - last_name
+        - email
+        - role
+    CreateUserResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
+        first_name:
+          type: string
+          example: John
+          minLength: 2
+        last_name:
+          type: string
+          example: Doe
+          minLength: 2
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        email:
+          type: string
+          example: john@acme.com
+        role:
+          type: string
+          description: The users role (can be admin or user)
+          example: admin
+          enum:
+            - editor
+            - marketer
+            - admin
+            - global_admin
+            - super_admin
+        password:
+          type: string
+          example: '123456789'
+          minLength: 9
+      required:
+        - _id
+        - first_name
+        - last_name
+        - email
+        - role
+    UserDto:
+      type: object
+      properties:
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
+        first_name:
+          type: string
+          example: John
+          minLength: 2
+        last_name:
+          type: string
+          example: Doe
+          minLength: 2
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        email:
+          type: string
+          example: john@acme.com
+        role:
+          description: The users role (can be admin or user)
+          example: admin
+          enum:
+            - editor
+            - marketer
+            - admin
+            - global_admin
+            - super_admin
+          type: string
+        password:
+          type: string
+          example: '123456789'
+          minLength: 9
+      required:
+        - first_name
+        - last_name
+        - email
+        - role
+    ChangePasswordDto:
+      type: object
+      properties:
+        current_password:
+          type: string
+        new_password:
+          type: string
+        confirm_password:
+          type: string
+      required:
+        - current_password
+        - new_password
+        - confirm_password
+    ChangeEmailDto:
+      type: object
+      properties:
+        confirm_token:
+          type: string
+      required:
+        - confirm_token
+    SendConfirmEmailRequestDto:
+      type: object
+      properties:
+        new_email:
+          type: string
+      required:
+        - new_email
+    UpdateUserRequestDto:
+      type: object
+      properties:
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
+        first_name:
+          type: string
+          example: John
+          minLength: 2
+        last_name:
+          type: string
+          example: Doe
+          minLength: 2
+        email:
+          type: string
+          example: john@acme.com
+        role:
+          type: string
+          description: The users role (can be admin or user)
+          example: admin
+          enum:
+            - editor
+            - marketer
+            - admin
+            - global_admin
+            - super_admin
+    ContactAttributeDto:
+      type: object
+      properties:
+        custom_attribute_id:
+          description: The id of the related custom attribute
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        value:
+          type: object
+          description: The value of this contact attribute
+      required:
+        - custom_attribute_id
+        - value
+    CreateContactRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The contact's email.
+          example: john.doe@example.com
+        first_name:
+          type: string
+          description: The contact's first name.
+          example: John
+        last_name:
+          type: string
+          description: The contact's last name.
+          example: Doe
+        afid:
+          description: The contact's ethermail afid
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        lists:
+          description: Lists the contact belongs to.
+          type: array
+          items:
+            type: string
+        custom_attributes:
+          description: Contact's custom attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactAttributeDto'
+      required:
+        - email
+        - wallet_address
+    CreateContactResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        email:
+          type: string
+          description: The contact's email.
+          example: john.doe@example.com
+        first_name:
+          type: string
+          description: The contact's first name.
+          example: John
+        last_name:
+          type: string
+          description: The contact's last name.
+          example: Doe
+        afid:
+          description: The contact's ethermail afid
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        lists:
+          description: Lists the contact belongs to.
+          type: array
+          items:
+            type: string
+        custom_attributes:
+          description: Contact's custom attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactAttributeDto'
+      required:
+        - _id
+        - email
+        - wallet_address
+    ContactDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The contact's email.
+          example: john.doe@example.com
+        first_name:
+          type: string
+          description: The contact's first name.
+          example: John
+        last_name:
+          type: string
+          description: The contact's last name.
+          example: Doe
+        afid:
+          description: The contact's ethermail afid
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        lists:
+          description: Lists the contact belongs to.
+          type: array
+          items:
+            type: string
+        custom_attributes:
+          description: Contact's custom attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactAttributeDto'
+      required:
+        - email
+        - wallet_address
+    UpdateContactRequestDto:
+      type: object
+      properties:
+        do_not_contact:
+          type: boolean
+          description: Do not contact
+        do_not_contact_reason:
+          type: string
+          minLength: 5
+          description: Do not contact reason
+        email:
+          type: string
+          description: The contact's email.
+          example: john.doe@example.com
+        first_name:
+          type: string
+          description: The contact's first name.
+          example: John
+        last_name:
+          type: string
+          description: The contact's last name.
+          example: Doe
+        afid:
+          description: The contact's ethermail afid
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        lists:
+          description: Lists the contact belongs to.
+          type: array
+          items:
+            type: string
+        custom_attributes:
+          description: Contact's custom attributes.
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactAttributeDto'
+    BulkDeleteContactsRequestDto:
+      type: object
+      properties:
+        contacts:
+          description: Contacts that are being deleted in bulk.
+          type: array
+          items:
+            type: string
+      required:
+        - contacts
+    SubscriptionRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The contact's email.
+          example: john.doe@example.com
+        wallet_address:
+          type: string
+          example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
+        widget:
+          type: string
+          description: Widget ID.
+      required:
+        - email
+        - wallet_address
+        - widget
+    CreateTemplateRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the email template.
+          example: Welcome Email
+          minLength: 5
+        html:
+          type: string
+          description: The html of the email template.
+      required:
+        - name
+        - html
+    CreateTemplateResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+          description: The name of the email template.
+          example: Welcome Email
+          minLength: 5
+        html:
+          type: string
+          description: The html of the email template.
+      required:
+        - _id
+        - name
+        - html
+    TemplateDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the email template.
+          example: Welcome Email
+          minLength: 5
+        html:
+          type: string
+          description: The html of the email template.
+      required:
+        - name
+        - html
+    UpdateTemplateRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the email template.
+          example: Welcome Email
+          minLength: 5
+        html:
+          type: string
+          description: The html of the email template.
+    CreateEmailRequestDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of email
+          minLength: 5
+        name:
+          type: string
+          description: The name of the email.
+          minLength: 5
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        objective:
+          type: number
+          description: The objective of the ad email.
+          enum: []
+        budget:
+          type: number
+          description: The budget of the ad email.
+          minimum: 5
+        target_audience:
+          type: object
+          description: The target audience of the email.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        html:
+          type: string
+          description: The html body of the email.
+          minLength: 5
+        send_now:
+          type: boolean
+          description: Whether to send the email now or later
+        send_date:
+          format: date-time
+          type: string
+          description: The send date of the email.
+        status:
+          type: object
+          description: The status of the email.
+      required:
+        - type
+        - name
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - objective
+        - budget
+        - target_audience
+        - target_lists
+        - target_segments
+        - html
+        - send_now
+        - send_date
+        - status
+    CreateEmailResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        kpi_sent:
+          type: string
+          description: The number of times email was sent.
+        kpi_opened:
+          type: string
+          description: The number of times email was opened.
+        kpi_clicks:
+          type: string
+          description: The number of times email was clicked.
+        kpi_soft_bounce:
+          type: string
+          description: The number of times email was soft bounded.
+        kpi_hard_bounce:
+          type: string
+          description: The number of times email was hard bounded.
+        kpi_unsubscribed:
+          type: string
+          description: The number of times email was unsubscribed.
+        type:
+          type: string
+          description: The type of email
+          minLength: 5
+        name:
+          type: string
+          description: The name of the email.
+          minLength: 5
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        objective:
+          type: number
+          description: The objective of the ad email.
+          enum: []
+        budget:
+          type: number
+          description: The budget of the ad email.
+          minimum: 5
+        target_audience:
+          type: object
+          description: The target audience of the email.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        html:
+          type: string
+          description: The html body of the email.
+          minLength: 5
+        send_now:
+          type: boolean
+          description: Whether to send the email now or later
+        send_date:
+          format: date-time
+          type: string
+          description: The send date of the email.
+        status:
+          type: object
+          description: The status of the email.
+      required:
+        - _id
+        - kpi_sent
+        - kpi_opened
+        - kpi_clicks
+        - kpi_soft_bounce
+        - kpi_hard_bounce
+        - kpi_unsubscribed
+        - type
+        - name
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - objective
+        - budget
+        - target_audience
+        - target_lists
+        - target_segments
+        - html
+        - send_now
+        - send_date
+        - status
+    SendDynamicAdDto:
+      type: object
+      properties: {}
+    EmailDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of email
+          minLength: 5
+        name:
+          type: string
+          description: The name of the email.
+          minLength: 5
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        objective:
+          description: The objective of the ad email.
+          enum: []
+          type: number
+        budget:
+          type: number
+          description: The budget of the ad email.
+          minimum: 5
+        target_audience:
+          type: object
+          description: The target audience of the email.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        html:
+          type: string
+          description: The html body of the email.
+          minLength: 5
+        send_now:
+          type: boolean
+          description: Whether to send the email now or later
+        send_date:
+          format: date-time
+          type: string
+          description: The send date of the email.
+        status:
+          type: object
+          description: The status of the email.
+      required:
+        - type
+        - name
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - objective
+        - budget
+        - target_audience
+        - target_lists
+        - target_segments
+        - html
+        - send_now
+        - send_date
+        - status
+    EmailLogDto:
+      type: object
+      properties:
+        tenant_id:
+          type: string
+          description: The id of the tenant this log entry is for
+        email_id:
+          type: string
+          description: The id of the email this log entry is for
+        automation_id:
+          type: string
+          description: The id of the automation this log entry is for
+        stage_id:
+          type: string
+          description: The id of the step this log entry is for
+        recipient:
+          type: object
+          description: The recipient details/metadata
+      required:
+        - tenant_id
+        - recipient
+    UpdateEmailRequestDto:
+      type: object
+      properties: {}
+    SendTestEmailDto:
+      type: object
+      properties:
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: object
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: object
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: object
+          description: The domain of the sender.
+        html:
+          type: string
+          description: The body html of the email.
+          minLength: 5
+        recipient_email:
+          type: string
+          description: The recipient of the test email.
+      required:
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - html
+        - recipient_email
+    RecipientDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - name
+        - email
+    CreateTransactionalEmailLogRequestDto:
+      type: object
+      properties:
+        sender_name:
+          type: string
+          description: The name of the sender
+          minLength: 3
+        sender_email:
+          type: string
+          description: The email of the sender
+        to_name:
+          type: string
+          minLength: 3
+        to_email:
+          type: string
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientDto'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientDto'
+        reply_to:
+          type: string
+        headers:
+          type: object
+        html:
+          type: string
+          minLength: 20
+        template_id:
+          type: string
+        merge_data:
+          type: object
+      required:
+        - sender_name
+        - sender_email
+        - to_name
+        - to_email
+        - subject
+        - merge_data
+    CreateTransactionalEmailLogResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        links:
+          description: The links embedded in the email
+          type: array
+          items:
+            type: object
+        status:
+          type: string
+          description: The status of the email
+          enum:
+            - queued
+            - sending
+            - sent
+            - failed
+        kpi_opened:
+          type: string
+          description: The number of times email was opened.
+        kpi_clicks:
+          type: string
+          description: The number of times email was clicked.
+        kpi_soft_bounce:
+          type: string
+          description: The number of times email was soft bounded.
+        kpi_hard_bounce:
+          type: string
+          description: The number of times email was hard bounded.
+        events:
+          type: object
+          description: Events related to the email
+        delivered_at:
+          format: date-time
+          type: string
+          description: The date the email was delivered
+        sender_name:
+          type: string
+          description: The name of the sender
+          minLength: 3
+        sender_email:
+          type: string
+          description: The email of the sender
+        to_name:
+          type: string
+          minLength: 3
+        to_email:
+          type: string
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientDto'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientDto'
+        reply_to:
+          type: string
+        headers:
+          type: object
+        html:
+          type: string
+          minLength: 20
+        template_id:
+          type: string
+        merge_data:
+          type: object
+      required:
+        - _id
+        - links
+        - status
+        - kpi_opened
+        - kpi_clicks
+        - kpi_soft_bounce
+        - kpi_hard_bounce
+        - events
+        - delivered_at
+        - sender_name
+        - sender_email
+        - to_name
+        - to_email
+        - subject
+        - merge_data
+    TransactionalEmailLogDto:
+      type: object
+      properties:
+        sender_name:
+          type: string
+          description: The name of the sender
+          minLength: 3
+        sender_email:
+          type: string
+          description: The email of the sender
+        to_name:
+          type: string
+          minLength: 3
+        to_email:
+          type: string
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientDto'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipientDto'
+        reply_to:
+          type: string
+        headers:
+          type: object
+        html:
+          type: string
+          minLength: 20
+        template_id:
+          type: string
+        merge_data:
+          type: object
+      required:
+        - sender_name
+        - sender_email
+        - to_name
+        - to_email
+        - subject
+        - merge_data
+    CalculateReachRequestDto:
+      type: object
+      properties:
+        location:
+          type: string
+        age_min:
+          type: number
+        age_max:
+          type: number
+        interests:
+          type: array
+          items:
+            type: string
+        language:
+          type: string
+        gender:
+          type: string
+        objective:
+          type: string
+        budget:
+          type: number
+        html:
+          type: string
+          minLength: 5
+      required:
+        - objective
+        - budget
+        - html
+    CreateSegmentRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the segment.
+          example: Segment 1
+          minLength: 3
+      required:
+        - name
+    CreateSegmentResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        count:
+          type: number
+        name:
+          type: string
+          description: The name of the segment.
+          example: Segment 1
+          minLength: 3
+      required:
+        - _id
+        - count
+        - name
+    SegmentDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the segment.
+          example: Segment 1
+          minLength: 3
+      required:
+        - name
+    UpdateSegmentRequestDto:
+      type: object
+      properties: {}
+    CreateListRequestDto:
+      type: object
+      properties:
+        tenant_id:
+          description: The id of the tenant this list belongs to.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        name:
+          type: string
+          description: The name of the list.
+          example: List 1
+          minLength: 3
+        autoimport:
+          type: boolean
+          description: Wheather autoimports are on for this list
+        smart_contract_id:
+          description: The id of the smart contract associated with this list.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        community_id:
+          description: The id of the community associated with this list.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+      required:
+        - name
+    CreateListResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        count:
+          type: number
+        tenant_id:
+          description: The id of the tenant this list belongs to.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        name:
+          type: string
+          description: The name of the list.
+          example: List 1
+          minLength: 3
+        autoimport:
+          type: boolean
+          description: Wheather autoimports are on for this list
+        smart_contract_id:
+          description: The id of the smart contract associated with this list.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        community_id:
+          description: The id of the community associated with this list.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+      required:
+        - _id
+        - count
+        - name
+    ListDto:
+      type: object
+      properties:
+        tenant_id:
+          description: The id of the tenant this list belongs to.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        name:
+          type: string
+          description: The name of the list.
+          example: List 1
+          minLength: 3
+        autoimport:
+          type: boolean
+          description: Wheather autoimports are on for this list
+        smart_contract_id:
+          description: The id of the smart contract associated with this list.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        community_id:
+          description: The id of the community associated with this list.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+      required:
+        - name
+    UpdateListRequestDto:
+      type: object
+      properties: {}
+    AddToListRequestDto:
+      type: object
+      properties:
+        contacts:
+          description: Contacts that are being added to the list.
+          type: array
+          items:
+            type: string
+      required:
+        - contacts
+    CreateAutomationRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the automation.
+          example: Automation 1
+          minLength: 5
+        condition:
+          type: string
+          description: The main trigger for the automation.
+          enum:
+            - contact_added_to_segment
+            - contact_added_to_list
+        list_ids:
+          description: The lists that will trigger this automation.
+          type: array
+          items:
+            type: string
+        segment_ids:
+          description: The segments that will trigger this automation.
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          description: The action that will be performed when the automation is triggered.
+          enum:
+            - send_email
+        template_id:
+          type: string
+          description: The template that will be used for the email.
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+      required:
+        - name
+        - condition
+        - list_ids
+        - segment_ids
+        - action
+        - template_id
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+    CreateAutomationResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+          description: The name of the automation.
+          example: Automation 1
+          minLength: 5
+        condition:
+          type: string
+          description: The main trigger for the automation.
+          enum:
+            - contact_added_to_segment
+            - contact_added_to_list
+        list_ids:
+          description: The lists that will trigger this automation.
+          type: array
+          items:
+            type: string
+        segment_ids:
+          description: The segments that will trigger this automation.
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          description: The action that will be performed when the automation is triggered.
+          enum:
+            - send_email
+        template_id:
+          type: string
+          description: The template that will be used for the email.
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+      required:
+        - _id
+        - name
+        - condition
+        - list_ids
+        - segment_ids
+        - action
+        - template_id
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+    AutomationDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the automation.
+          example: Automation 1
+          minLength: 5
+        condition:
+          description: The main trigger for the automation.
+          enum:
+            - contact_added_to_segment
+            - contact_added_to_list
+          type: string
+        list_ids:
+          description: The lists that will trigger this automation.
+          type: array
+          items:
+            type: string
+        segment_ids:
+          description: The segments that will trigger this automation.
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          description: The action that will be performed when the automation is triggered.
+          enum:
+            - send_email
+        template_id:
+          type: string
+          description: The template that will be used for the email.
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+      required:
+        - name
+        - condition
+        - list_ids
+        - segment_ids
+        - action
+        - template_id
+        - subject
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+    UpdateAutomationRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the automation.
+          example: Automation 1
+          minLength: 5
+        condition:
+          type: string
+          description: The main trigger for the automation.
+          enum:
+            - contact_added_to_segment
+            - contact_added_to_list
+        list_ids:
+          description: The lists that will trigger this automation.
+          type: array
+          items:
+            type: string
+        segment_ids:
+          description: The segments that will trigger this automation.
+          type: array
+          items:
+            type: string
+        action:
+          type: string
+          description: The action that will be performed when the automation is triggered.
+          enum:
+            - send_email
+        template_id:
+          type: string
+          description: The template that will be used for the email.
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+    CreateCustomDomainRequestDto:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The custom domain's name.
+          example: example.com
+      required:
+        - url
+    CreateCustomDomainResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        url:
+          type: string
+          description: The custom domain's name.
+          example: example.com
+      required:
+        - _id
+        - url
+    CustomDomainDto:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The custom domain's name.
+          example: example.com
+      required:
+        - url
+    CreateSmartContractRequestDto:
+      type: object
+      properties:
+        chain:
+          type: string
+          description: The chain that the smart contract lives on.
+          example: ethereum
+        asset_type:
+          type: string
+          description: The type of asset managed by this contract.
+          example: erc20
+          enum:
+            - ERC20
+            - ERC721
+            - ERC1155
+        address:
+          type: string
+          description: The address of the smart contract.
+          example: 0x...
+        owner:
+          type: boolean
+          description: Whether the user is the owner of the smart contract.
+      required:
+        - chain
+        - asset_type
+        - address
+        - owner
+    CreateSmartContractResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        chain:
+          type: string
+          description: The chain that the smart contract lives on.
+          example: ethereum
+        asset_type:
+          type: string
+          description: The type of asset managed by this contract.
+          example: erc20
+          enum:
+            - ERC20
+            - ERC721
+            - ERC1155
+        address:
+          type: string
+          description: The address of the smart contract.
+          example: 0x...
+        owner:
+          type: boolean
+          description: Whether the user is the owner of the smart contract.
+      required:
+        - _id
+        - chain
+        - asset_type
+        - address
+        - owner
+    SmartContractDto:
+      type: object
+      properties:
+        chain:
+          type: string
+          description: The chain that the smart contract lives on.
+          example: ethereum
+        asset_type:
+          description: The type of asset managed by this contract.
+          example: erc20
+          enum:
+            - ERC20
+            - ERC721
+            - ERC1155
+          type: string
+        address:
+          type: string
+          description: The address of the smart contract.
+          example: 0x...
+        owner:
+          type: boolean
+          description: Whether the user is the owner of the smart contract.
+      required:
+        - chain
+        - asset_type
+        - address
+        - owner
+    CreateCustomAttributeRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the custom attribute.
+          example: Attribute Name
+          minLength: 3
+        type:
+          type: string
+          description: Type of the custom attribute.
+          example: text
+          enum:
+            - boolean
+            - text
+            - number
+            - date
+            - category
+        options:
+          description: The options for a 'category' list
+          example: '"["Red", "Blue"]"'
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - type
+        - options
+    CreateCustomAttributeResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+          description: The name of the custom attribute.
+          example: Attribute Name
+          minLength: 3
+        type:
+          type: string
+          description: Type of the custom attribute.
+          example: text
+          enum:
+            - boolean
+            - text
+            - number
+            - date
+            - category
+        options:
+          description: The options for a 'category' list
+          example: '"["Red", "Blue"]"'
+          type: array
+          items:
+            type: string
+      required:
+        - _id
+        - name
+        - type
+        - options
+    CustomAttributeDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the custom attribute.
+          example: Attribute Name
+          minLength: 3
+        type:
+          description: Type of the custom attribute.
+          example: text
+          enum:
+            - boolean
+            - text
+            - number
+            - date
+            - category
+          type: string
+        options:
+          description: The options for a 'category' list
+          example: '"["Red", "Blue"]"'
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - type
+        - options
+    UpdateCustomAttributeRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the custom attribute.
+          example: Attribute Name
+          minLength: 3
+        type:
+          description: Type of the custom attribute.
+          example: text
+          enum:
+            - boolean
+            - text
+            - number
+            - date
+            - category
+          type: string
+        options:
+          description: The options for a 'category' list
+          example: '"["Red", "Blue"]"'
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - type
+        - options
+    CreatePlanRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the plan.
+          example: Basic
+          minLength: 3
+        api_access:
+          type: boolean
+          description: Can use api.
+        team_features:
+          type: boolean
+          description: Can manage users.
+        send_advertising_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_advertising_emails:
+          type: boolean
+          description: Can view advertising emails.
+        send_engagement_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_engagement_emails:
+          type: boolean
+          description: Can view engagement emails.
+        manage_contacts:
+          type: boolean
+          description: Can manage contacts (+lists & segments).
+        monitor_smart_contracts:
+          type: boolean
+          description: Can manage smart contracts.
+        custom_attributes:
+          type: boolean
+          description: Can manage custom attributes.
+        automations:
+          type: boolean
+          description: Can manage automations.
+        templates:
+          type: boolean
+          description: Can manage templates.
+        transactional_emails:
+          type: boolean
+          description: Can access transactional emails.
+        custom_domains:
+          type: boolean
+          description: Can configure custom domains.
+      required:
+        - name
+        - api_access
+        - team_features
+        - send_advertising_emails
+        - view_advertising_emails
+        - send_engagement_emails
+        - view_engagement_emails
+        - manage_contacts
+        - monitor_smart_contracts
+        - custom_attributes
+        - automations
+        - templates
+        - transactional_emails
+        - custom_domains
+    CreatePlanResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+          description: The name of the plan.
+          example: Basic
+          minLength: 3
+        api_access:
+          type: boolean
+          description: Can use api.
+        team_features:
+          type: boolean
+          description: Can manage users.
+        send_advertising_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_advertising_emails:
+          type: boolean
+          description: Can view advertising emails.
+        send_engagement_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_engagement_emails:
+          type: boolean
+          description: Can view engagement emails.
+        manage_contacts:
+          type: boolean
+          description: Can manage contacts (+lists & segments).
+        monitor_smart_contracts:
+          type: boolean
+          description: Can manage smart contracts.
+        custom_attributes:
+          type: boolean
+          description: Can manage custom attributes.
+        automations:
+          type: boolean
+          description: Can manage automations.
+        templates:
+          type: boolean
+          description: Can manage templates.
+        transactional_emails:
+          type: boolean
+          description: Can access transactional emails.
+        custom_domains:
+          type: boolean
+          description: Can configure custom domains.
+      required:
+        - _id
+        - name
+        - api_access
+        - team_features
+        - send_advertising_emails
+        - view_advertising_emails
+        - send_engagement_emails
+        - view_engagement_emails
+        - manage_contacts
+        - monitor_smart_contracts
+        - custom_attributes
+        - automations
+        - templates
+        - transactional_emails
+        - custom_domains
+    PlanDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the plan.
+          example: Basic
+          minLength: 3
+        api_access:
+          type: boolean
+          description: Can use api.
+        team_features:
+          type: boolean
+          description: Can manage users.
+        send_advertising_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_advertising_emails:
+          type: boolean
+          description: Can view advertising emails.
+        send_engagement_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_engagement_emails:
+          type: boolean
+          description: Can view engagement emails.
+        manage_contacts:
+          type: boolean
+          description: Can manage contacts (+lists & segments).
+        monitor_smart_contracts:
+          type: boolean
+          description: Can manage smart contracts.
+        custom_attributes:
+          type: boolean
+          description: Can manage custom attributes.
+        automations:
+          type: boolean
+          description: Can manage automations.
+        templates:
+          type: boolean
+          description: Can manage templates.
+        transactional_emails:
+          type: boolean
+          description: Can access transactional emails.
+        custom_domains:
+          type: boolean
+          description: Can configure custom domains.
+      required:
+        - name
+        - api_access
+        - team_features
+        - send_advertising_emails
+        - view_advertising_emails
+        - send_engagement_emails
+        - view_engagement_emails
+        - manage_contacts
+        - monitor_smart_contracts
+        - custom_attributes
+        - automations
+        - templates
+        - transactional_emails
+        - custom_domains
+    UpdatePlanRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the plan.
+          example: Basic
+          minLength: 3
+        api_access:
+          type: boolean
+          description: Can use api.
+        team_features:
+          type: boolean
+          description: Can manage users.
+        send_advertising_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_advertising_emails:
+          type: boolean
+          description: Can view advertising emails.
+        send_engagement_emails:
+          type: boolean
+          description: Can send advertising emails.
+        view_engagement_emails:
+          type: boolean
+          description: Can view engagement emails.
+        manage_contacts:
+          type: boolean
+          description: Can manage contacts (+lists & segments).
+        monitor_smart_contracts:
+          type: boolean
+          description: Can manage smart contracts.
+        custom_attributes:
+          type: boolean
+          description: Can manage custom attributes.
+        automations:
+          type: boolean
+          description: Can manage automations.
+        templates:
+          type: boolean
+          description: Can manage templates.
+        transactional_emails:
+          type: boolean
+          description: Can access transactional emails.
+        custom_domains:
+          type: boolean
+          description: Can configure custom domains.
+    CommunityDto:
+      type: object
+      properties:
+        tenant_id:
+          description: The tenant the community belongs to.
+          example: 5f1d7c6b9b3f6b1d6c4d9b3f
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        title:
+          type: string
+          description: The name of the community
+          example: Probably Nothing
+          minLength: 3
+        slug:
+          type: string
+          description: The slug of the community
+          example: probably-nothing
+          minLength: 3
+        description:
+          type: string
+          description: The description of the community
+          example: Doe
+          minLength: 10
+        logo:
+          type: string
+          description: The logo of the community
+        background:
+          type: string
+          description: The background of the community
+        affiliate_id:
+          type: string
+          description: The affiliate id of the community
+          example: 5f1d7c6b9b3f6b1d6c4d9b3f
+        user_id:
+          type: string
+          description: The user id of the community
+          example: 5f1d7c6b9b3f6b1d6c4d9b3f
+      required:
+        - title
+        - slug
+        - description
+    CreateCommunityRequestDto:
+      type: object
+      properties:
+        tenant_id:
+          description: The tenant the community belongs to.
+          example: 5f1d7c6b9b3f6b1d6c4d9b3f
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        title:
+          type: string
+          description: The name of the community
+          example: Probably Nothing
+          minLength: 3
+        slug:
+          type: string
+          description: The slug of the community
+          example: probably-nothing
+          minLength: 3
+        description:
+          type: string
+          description: The description of the community
+          example: Doe
+          minLength: 10
+        logo:
+          type: string
+          description: The logo of the community
+        background:
+          type: string
+          description: The background of the community
+        affiliate_id:
+          type: string
+          description: The affiliate id of the community
+          example: 5f1d7c6b9b3f6b1d6c4d9b3f
+        user_id:
+          type: string
+          description: The user id of the community
+          example: 5f1d7c6b9b3f6b1d6c4d9b3f
+      required:
+        - title
+        - slug
+        - description
+    CreateWidgetRequestDto:
+      type: object
+      properties:
+        tenant_id:
+          description: The id of the tenant this widget belongs to.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        type:
+          type: string
+          description: The type of the widget.
+          example: Community Subscription
+          minLength: 3
+        target_id:
+          description: The id of the target list associated with this widget.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        url:
+          type: string
+          description: The URL for this widget
+      required:
+        - type
+        - target_id
+        - url
+    CreateWidgetResponseDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        count:
+          type: number
+        tenant_id:
+          description: The id of the tenant this widget belongs to.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        type:
+          type: string
+          description: The type of the widget.
+          example: Community Subscription
+          minLength: 3
+        target_id:
+          description: The id of the target list associated with this widget.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        url:
+          type: string
+          description: The URL for this widget
+      required:
+        - _id
+        - count
+        - type
+        - target_id
+        - url
+    WidgetDto:
+      type: object
+      properties:
+        tenant_id:
+          description: The id of the tenant this widget belongs to.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        type:
+          type: string
+          description: The type of the widget.
+          example: Community Subscription
+          minLength: 3
+        target_id:
+          description: The id of the target list associated with this widget.
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        url:
+          type: string
+          description: The URL for this widget
+      required:
+        - type
+        - target_id
+        - url
+    LoginRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: brennan.huff@pww.com
+        password:
+          type: string
+          example: '123456789'
+      required:
+        - email
+        - password
+    TokenDto:
+      type: object
+      properties:
+        expiresIn:
+          type: number
+          example: '1090123423949223498'
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+      required:
+        - expiresIn
+        - accessToken
+    LoginResponseDto:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/TokenDto'
+      required:
+        - token
+    VerifyRequestDto:
+      type: object
+      properties:
+        token:
+          type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGViNTlhY2UxZTM2MTEwMTJjZmRiZmEiLCJpYXQiOjE2OTQxNzUxODksImV4cCI6MTY5NDE3ODc4OX0.kHvX8gGV35X-Cv0snFaxmCiRfVs_KCjDhC_PupT4aOg
+      required:
+        - token
+    VerifyResponseDto:
+      type: object
+      properties:
+        user:
+          type: boolean
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGViNTlhY2UxZTM2MTEwMTJjZmRiZmEiLCJpYXQiOjE2OTQxNzUxODksImV4cCI6MTY5NDE3ODc4OX0.kHvX8gGV35X-Cv0snFaxmCiRfVs_KCjDhC_PupT4aOg
+      required:
+        - user
+    ResetPasswordRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          example: brennan.huff@pww.com
+      required:
+        - email
+    SetNewPasswordRequestDto:
+      type: object
+      properties:
+        user_id:
+          example: ''
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
+        reset_token:
+          type: string
+          example: x034mlja9u324ikns3
+          minLength: 5
+        password:
+          type: string
+          example: '123456789'
+          minLength: 9
+        confirm_password:
+          type: string
+          example: '123456789'
+          minLength: 9
+      required:
+        - user_id
+        - reset_token
+        - password
+        - confirm_password
