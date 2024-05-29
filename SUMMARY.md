@@ -7,7 +7,6 @@
 ## Endpoints
 
 * [Automations](endpoints/automations.md)
-* [Community Page](endpoints/community-page.md)
 * [Contacts](endpoints/contacts.md)
 * [Custom Attributes](endpoints/custom-attributes.md)
 * [Lists](endpoints/lists.md)
