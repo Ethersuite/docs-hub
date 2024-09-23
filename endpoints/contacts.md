@@ -39,9 +39,3 @@ description: Use the following endpoints to manage Contacts.
 {% swagger src="../hub-api.yml" path="/v1/contacts" method="delete" expanded="true" %}
 [hub-api.yml](../hub-api.yml)
 {% endswagger %}
-
-#### Import from CSV
-
-{% swagger src="../hub-api.yml" path="/v1/contacts/import" method="post" %}
-[hub-api.yml](../hub-api.yml)
-{% endswagger %}
