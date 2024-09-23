@@ -3408,7 +3408,9 @@ info:
   version: '1.0'
   contact: {}
 tags: []
-servers: []
+servers:
+  - url: hub-gateway.ethermail.io
+    description: Production server (uses live data)
 components:
   securitySchemes:
     bearer:
