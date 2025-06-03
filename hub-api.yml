@@ -1258,6 +1258,10 @@ paths:
           description: Generate email content from a url using AI
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
       tags:
         - emails
       security:
@@ -1353,6 +1357,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AdjustEmailsQueueRequestDto'
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/bounce:
+    post:
+      operationId: EmailsController_trackBounce
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BounceRequestDto'
+      responses:
+        '201':
+          description: Tracks the bounce of an email and updates the email log accordingly.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BounceRequestDto'
+        '204':
+          description: ''
       tags:
         - emails
       security:
@@ -1481,6 +1508,31 @@ paths:
             type: string
       responses:
         '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+      tags:
+        - emails
+      security:
+        - bearer: []
+  /v1/emails/{email_id}/viral-snippets/{status}:
+    put:
+      operationId: EmailsController_updateViralSnippets
+      parameters:
+        - name: email_id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: status
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
           description: ''
           content:
             application/json:
@@ -1711,6 +1763,17 @@ paths:
   /v1/advertising/update-kpis:
     post:
       operationId: AdvertisingController_updateKpis
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - advertising
+      security:
+        - bearer: []
+  /v1/advertising/{id}/force-resend:
+    post:
+      operationId: AdvertisingController_forceResend
       parameters: []
       responses:
         '201':
@@ -2239,6 +2302,82 @@ paths:
       responses:
         '204':
           description: Set Automation status (active or paused).
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/nodes/entry:
+    post:
+      operationId: AutomationsController_validateEntryNode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationEntryNodeDto'
+      responses:
+        '201':
+          description: Validator for entry nodes.
+        '403':
+          description: This action is not permitted.
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/nodes/action:
+    post:
+      operationId: AutomationsController_validateActionNode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationActionNodeDto'
+      responses:
+        '201':
+          description: Validator for action nodes.
+        '403':
+          description: This action is not permitted.
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/nodes/branch:
+    post:
+      operationId: AutomationsController_validateBranchNode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationBranchNodeDto'
+      responses:
+        '201':
+          description: Validator for branch nodes.
+        '403':
+          description: This action is not permitted.
+      tags:
+        - automations
+      security:
+        - bearer: []
+  /v1/automations/nodes/wait:
+    post:
+      operationId: AutomationsController_validateWaitNode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationWaitNodeDto'
+      responses:
+        '201':
+          description: Validator for wait nodes.
+        '403':
+          description: This action is not permitted.
       tags:
         - automations
       security:
@@ -2875,9 +3014,9 @@ paths:
         - files
       security:
         - bearer: []
-  /v1/communities:
+  /v1/communities/my-community:
     get:
-      operationId: CommunitiesController_findById
+      operationId: CommunitiesController_findByTenant
       parameters: []
       responses:
         '200':
@@ -2892,7 +3031,50 @@ paths:
         - communities
       security:
         - bearer: []
+  /v1/communities/slug/{slug}:
+    get:
+      operationId: CommunitiesController_findBySlug
+      parameters:
+        - name: slug
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the Community by slug.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDto'
+        '404':
+          description: The Community was not found.
+      tags:
+        - communities
+      security:
+        - bearer: []
   /v1/communities/{id}:
+    get:
+      operationId: CommunitiesController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the Community by Id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDto'
+        '404':
+          description: The Community was not found.
+      tags:
+        - communities
+      security:
+        - bearer: []
     patch:
       operationId: CommunitiesController_update
       parameters:
@@ -2910,6 +3092,73 @@ paths:
       responses:
         '204':
           description: Saved changes to the community profile.
+      tags:
+        - communities
+      security:
+        - bearer: []
+  /v1/communities:
+    get:
+      operationId: CommunitiesController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Custom Attributes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
       tags:
         - communities
       security:
@@ -3054,6 +3303,22 @@ paths:
       responses:
         '200':
           description: Returns a list of invoices for the tenant
+      tags:
+        - billing
+      security:
+        - bearer: []
+  /v1/billing/session/{sessionId}:
+    get:
+      operationId: BillingController_getCheckoutSession
+      parameters:
+        - name: sessionId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the checkout session
       tags:
         - billing
       security:
@@ -3307,6 +3572,571 @@ paths:
           description: Deleted the applet.
       tags:
         - applets
+      security:
+        - bearer: []
+  /v1/autodrafts:
+    post:
+      operationId: AutodraftsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAutodraftRequestDto'
+      responses:
+        '201':
+          description: Returns the newly created Autodraft.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAutodraftResponseDto'
+        '403':
+          description: This action is not permitted.
+      tags:
+        - autodrafts
+      security:
+        - bearer: []
+    get:
+      operationId: AutodraftsController_findAll
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number
+          schema:
+            type: number
+        - name: perPage
+          required: false
+          in: query
+          description: Number of items per page
+          schema:
+            type: number
+        - name: sortField
+          required: false
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+        - name: filterField
+          required: false
+          in: query
+          description: Field to filter by
+          schema:
+            type: string
+        - name: filterValue
+          required: false
+          in: query
+          description: Value to filter by
+          schema:
+            type: string
+        - name: dateRange
+          required: false
+          in: query
+          description: Date range to search for
+          schema:
+            enum:
+              - all_time
+              - this_week
+              - last_week
+              - this_month
+              - last_month
+              - this_quarter
+              - last_quarter
+              - this_year
+              - last_year
+            type: string
+        - name: searchString
+          required: false
+          in: query
+          description: Value to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a list (page) of Autodrafts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pageableResponse'
+      tags:
+        - autodrafts
+      security:
+        - bearer: []
+  /v1/autodrafts/{id}:
+    get:
+      operationId: AutodraftsController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the Autodraft with the given id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutodraftDto'
+        '404':
+          description: Autodraft not found.
+      tags:
+        - autodrafts
+      security:
+        - bearer: []
+    patch:
+      operationId: AutodraftsController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAutodraftRequestDto'
+      responses:
+        '200':
+          description: Returns the updated Autodraft.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutodraftDto'
+        '204':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '403':
+          description: This action is not permitted.
+        '404':
+          description: Autodraft not found.
+      tags:
+        - autodrafts
+      security:
+        - bearer: []
+    delete:
+      operationId: AutodraftsController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Autodraft successfully deleted.
+        '403':
+          description: This action is not permitted.
+        '404':
+          description: Autodraft not found.
+      tags:
+        - autodrafts
+      security:
+        - bearer: []
+  /v1/ai/check-ethermail-like:
+    post:
+      operationId: AIController_checkEtherMailLike
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckEtherMailLikeRequestDto'
+      responses:
+        '201':
+          description: Returns if label is EtherMail-like string.
+        '403':
+          description: This action is not permitted.
+      tags:
+        - ai
+      security:
+        - bearer: []
+  /v1/apc/verify:
+    post:
+      operationId: ApcController_getAntiPishing
+      parameters: []
+      responses:
+        '200':
+          description: Returns the Anti Pishing data.
+        '201':
+          description: ''
+        '404':
+          description: The contact was not found.
+      tags:
+        - apc
+      security:
+        - bearer: []
+  /v1/apc/update:
+    post:
+      operationId: ApcController_updateAntiPhishing
+      parameters: []
+      responses:
+        '204':
+          description: Saved Anti Phishing data to the Contact
+      tags:
+        - apc
+      security:
+        - bearer: []
+  /v1/email-airdrop:
+    get:
+      operationId: EmailAirdropController_getEmailAirdrop
+      parameters: []
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Gets the data of an email airdrop from it's entity ID.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+    post:
+      operationId: EmailAirdropController_createEmailAirdrop
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmailAirdropDto'
+      responses:
+        '201':
+          description: Returns newly created Email Airdrop entity.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/tenant-new-fund-account:
+    get:
+      operationId: EmailAirdropController_getNewTenantFundAddress
+      parameters: []
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: >-
+            Gets new account by latest airdrop index from tenant HDNode, if no
+            seed phrase, it is created.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/transfer/{id}/{paymail_id}:
+    post:
+      operationId: EmailAirdropController_transfer
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: paymail_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: >-
+            Checks conditions, transfers amount to claiming user and sums up
+            claim on Email Airdrop.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+    get:
+      operationId: EmailAirdropController_getTransfer
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: paymail_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Gets Email Airdrop Paymail.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/return-surplus:
+    post:
+      operationId: EmailAirdropController_returnSurplus
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnSurplusDto'
+      responses:
+        '201':
+          description: >-
+            Returns remaining funds to Tenant Surplus Recipient on Email
+            Airdrop.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/change-surplus-recipient:
+    post:
+      operationId: EmailAirdropController_changeSurplusRecipient
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeSurplusRecipientDto'
+      responses:
+        '201':
+          description: Changes Email Airdrop surplus recipient.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/{airdrop_id}/import-recipients:
+    post:
+      operationId: EmailAirdropController_importRecipients
+      parameters:
+        - name: airdrop_id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportAirdropRecipientsDto'
+      responses:
+        '201':
+          description: Import contacts with Email Airdrop data records.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/token-proxy-address/{chain}:
+    get:
+      operationId: EmailAirdropController_getTokenProxyAddressForChain
+      parameters:
+        - name: chain
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Return EtherMailTokenProxyAddress by chain label.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/token-proxy-addresses:
+    get:
+      operationId: EmailAirdropController_getTokenProxyAddressesByChain
+      parameters: []
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Return EtherMailTokenProxyAddresses.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/{airdropId}/create-token-proxy-airdrop:
+    post:
+      operationId: EmailAirdropController_createTokenProxyAirdrop
+      parameters:
+        - name: airdropId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Creates a job for creating Airdorp on TokenProxySmartContract.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /v1/email-airdrop/token-proxy-valid/{chain}/{address}:
+    get:
+      operationId: EmailAirdropController_getTokenProxyValidAddress
+      parameters:
+        - name: chain
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: address
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Creates a job for creating Airdorp on TokenProxySmartContract.
+      tags:
+        - email-airdrop
+      security:
+        - bearer: []
+  /viral-snippets:
+    post:
+      operationId: ViralSnippetController_saveViralSnippet
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ViralSnippetDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+  /viral-snippets/{uuid}:
+    get:
+      operationId: ViralSnippetController_getViralSnippet
+      parameters:
+        - name: uuid
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/read-to-earn/{id}:
+    get:
+      operationId: ReadToEarnController_previewEmail
+      parameters: []
+      responses:
+        '200':
+          description: Preview email
+      tags:
+        - read-to-earn
+      security:
+        - bearer: []
+  /v1/disappearing-emails:
+    post:
+      operationId: DisappearingEmailsController_createDisappearingEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDisappearingEmailDto'
+      responses:
+        '201':
+          description: Creates a new disappearing email.
+      tags:
+        - disappearing-emails
+      security:
+        - bearer: []
+  /v1/disappearing-emails/{email_id}:
+    delete:
+      operationId: DisappearingEmailsController_removeEmailDisappearingEmail
+      parameters:
+        - name: email_id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Removes disappearing email feature, if existing, for the email.
+      tags:
+        - disappearing-emails
+      security:
+        - bearer: []
+  /v1/ad-contact-metadata/{id}:
+    delete:
+      operationId: AdContactMetadataController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted the Ad contact metadata.
+      tags:
+        - ad-contact-metadata
+      security:
+        - bearer: []
+  /v1/emt-staking:
+    get:
+      operationId: EmtStakingController_getEMTStakingConfig
+      parameters: []
+      responses:
+        '200':
+          description: ''
+        '201':
+          description: Returns EMTStaking SC Config data.
+      tags:
+        - emt-staking
+      security:
+        - bearer: []
+  /v1/emt-staking/deposit-signature:
+    post:
+      operationId: EmtStakingController_getTenantDepositAuthorizerSignature
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmtDepositAuthorizationDto'
+      responses:
+        '201':
+          description: Returns signature for Tenant deposit for EMTStaking SC.
+      tags:
+        - emt-staking
+      security:
+        - bearer: []
+  /v1/emt-staking/start-withdraw:
+    post:
+      operationId: EmtStakingController_withdrawPetition
+      parameters: []
+      responses:
+        '201':
+          description: >-
+            Save withdraw start by tenant for latter process after lock period
+            and sends email to monitoring users.
+      tags:
+        - emt-staking
       security:
         - bearer: []
   /v1/auth/login:
@@ -3758,7 +4588,7 @@ components:
         records:
           type: array
           items:
-            $ref: '#/components/schemas/AppletDto'
+            $ref: '#/components/schemas/AutodraftDto'
         pagination:
           type: object
           properties:
@@ -3908,6 +4738,20 @@ components:
           example: Acme Corporation
           minLength: 3
           maxLength: 200
+        default_sender_name:
+          type: string
+          description: The tenants default sender name.
+          example: Acme Corporation
+          minLength: 3
+        default_sender_alias:
+          type: string
+          description: The tenants default sender alias.
+          example: noreply
+          pattern: /^[a-zA-Z0-9._-]+$/
+        default_sender_domain_id:
+          description: The tenants default sender domain id
+          allOf:
+            - $ref: '#/components/schemas/ObjectId'
       required:
         - name
         - unsubscribe_text
@@ -4130,6 +4974,12 @@ components:
         origin:
           type: string
           description: Contact comes from EtherMail's onboarding
+        anti_phishing_code:
+          type: string
+        anti_phishing_color:
+          type: number
+        subscriber:
+          type: boolean
       required:
         - email
         - wallet_address
@@ -4171,6 +5021,12 @@ components:
         origin:
           type: string
           description: Contact comes from EtherMail's onboarding
+        anti_phishing_code:
+          type: string
+        anti_phishing_color:
+          type: number
+        subscriber:
+          type: boolean
       required:
         - _id
         - email
@@ -4211,6 +5067,12 @@ components:
         origin:
           type: string
           description: Contact comes from EtherMail's onboarding
+        anti_phishing_code:
+          type: string
+        anti_phishing_color:
+          type: number
+        subscriber:
+          type: boolean
       required:
         - email
         - wallet_address
@@ -4224,6 +5086,9 @@ components:
           type: string
           minLength: 5
           description: Do not contact reason
+        tenant_id:
+          type: string
+          description: Tenant id
         email:
           type: string
           description: The contact's email.
@@ -4257,6 +5122,12 @@ components:
         origin:
           type: string
           description: Contact comes from EtherMail's onboarding
+        anti_phishing_code:
+          type: string
+        anti_phishing_color:
+          type: number
+        subscriber:
+          type: boolean
     BulkDeleteContactsRequestDto:
       type: object
       properties:
@@ -4298,9 +5169,17 @@ components:
         json:
           type: string
           description: The json of the email template.
+        supports_ai_content:
+          type: boolean
+          description: >-
+            Whether the email template supports AI content (e.g. has an AI
+            content block).
         version:
           type: number
           description: The version of the email template.
+        default_subject:
+          type: string
+          description: Default subject of the email template.
       required:
         - name
         - html
@@ -4320,9 +5199,17 @@ components:
         json:
           type: string
           description: The json of the email template.
+        supports_ai_content:
+          type: boolean
+          description: >-
+            Whether the email template supports AI content (e.g. has an AI
+            content block).
         version:
           type: number
           description: The version of the email template.
+        default_subject:
+          type: string
+          description: Default subject of the email template.
       required:
         - _id
         - name
@@ -4341,9 +5228,17 @@ components:
         json:
           type: string
           description: The json of the email template.
+        supports_ai_content:
+          type: boolean
+          description: >-
+            Whether the email template supports AI content (e.g. has an AI
+            content block).
         version:
           type: number
           description: The version of the email template.
+        default_subject:
+          type: string
+          description: Default subject of the email template.
       required:
         - name
         - html
@@ -4361,9 +5256,17 @@ components:
         json:
           type: string
           description: The json of the email template.
+        supports_ai_content:
+          type: boolean
+          description: >-
+            Whether the email template supports AI content (e.g. has an AI
+            content block).
         version:
           type: number
           description: The version of the email template.
+        default_subject:
+          type: string
+          description: Default subject of the email template.
     CreateEmailRequestDto:
       type: object
       properties:
@@ -4433,6 +5336,12 @@ components:
         status:
           type: object
           description: The status of the email.
+        disappear_in:
+          type: number
+          minimum: 1
+          maximum: 31
+        email_enhancers:
+          type: object
       required:
         - type
         - name
@@ -4449,6 +5358,8 @@ components:
         - send_now
         - send_date
         - status
+        - disappear_in
+        - email_enhancers
     CreateEmailResponseDto:
       type: object
       properties:
@@ -4538,6 +5449,12 @@ components:
         status:
           type: object
           description: The status of the email.
+        disappear_in:
+          type: number
+          minimum: 1
+          maximum: 31
+        email_enhancers:
+          type: object
       required:
         - _id
         - kpi_sent
@@ -4561,6 +5478,8 @@ components:
         - send_now
         - send_date
         - status
+        - disappear_in
+        - email_enhancers
     SendDynamicAdDto:
       type: object
       properties: {}
@@ -4633,6 +5552,12 @@ components:
         status:
           type: object
           description: The status of the email.
+        disappear_in:
+          type: number
+          minimum: 1
+          maximum: 31
+        email_enhancers:
+          type: object
       required:
         - type
         - name
@@ -4649,12 +5574,16 @@ components:
         - send_now
         - send_date
         - status
+        - disappear_in
+        - email_enhancers
     EmailLogDto:
       type: object
       properties:
         type:
           type: string
           description: The id of the tenant this log entry is for
+        objective:
+          type: string
         tenant_id:
           type: string
           description: The id of the tenant this log entry is for
@@ -4670,6 +5599,9 @@ components:
         recipient:
           type: object
           description: The recipient details/metadata
+        status:
+          type: string
+          description: The status of the email
       required:
         - type
         - tenant_id
@@ -4686,13 +5618,18 @@ components:
       properties:
         url:
           type: string
-        type:
+        emailSchema:
+          type: string
+        flow:
           type: string
           enum:
-            - newsletter
+            - vertical
+            - horizontal
+            - alternating
       required:
         - url
-        - type
+        - emailSchema
+        - flow
     SendTestEmailDto:
       type: object
       properties:
@@ -4718,6 +5655,8 @@ components:
         recipient_email:
           type: string
           description: The recipient of the test email.
+        email_enhancers:
+          type: object
       required:
         - subject
         - sender_name
@@ -4732,6 +5671,25 @@ components:
           type: string
       required:
         - user_id
+    BounceRequestDto:
+      type: object
+      properties:
+        email_id:
+          type: string
+        email_log_id:
+          type: string
+        email:
+          type: string
+        errorCode:
+          type: number
+        transactional:
+          type: boolean
+      required:
+        - email_id
+        - email_log_id
+        - email
+        - errorCode
+        - transactional
     RecipientDto:
       type: object
       properties:
@@ -4745,6 +5703,12 @@ components:
     CreateTransactionalEmailLogRequestDto:
       type: object
       properties:
+        subject:
+          type: string
+          description: The subject of the email.
+          minLength: 5
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
         sender_name:
           type: string
           description: The name of the sender
@@ -4757,10 +5721,6 @@ components:
           minLength: 3
         to_email:
           type: string
-        subject:
-          type: string
-          description: The subject of the email.
-          minLength: 5
         cc:
           type: array
           items:
@@ -4781,11 +5741,12 @@ components:
         merge_data:
           type: object
       required:
+        - subject
+        - tenant_id
         - sender_name
         - sender_email
         - to_name
         - to_email
-        - subject
         - merge_data
     CreateTransactionalEmailLogResponseDto:
       type: object
@@ -4824,6 +5785,8 @@ components:
           format: date-time
           type: string
           description: The date the email was delivered
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
         sender_name:
           type: string
           description: The name of the sender
@@ -4869,6 +5832,7 @@ components:
         - kpi_hard_bounce
         - events
         - delivered_at
+        - tenant_id
         - sender_name
         - sender_email
         - to_name
@@ -4878,6 +5842,8 @@ components:
     TransactionalEmailLogDto:
       type: object
       properties:
+        tenant_id:
+          $ref: '#/components/schemas/ObjectId'
         sender_name:
           type: string
           description: The name of the sender
@@ -4914,6 +5880,7 @@ components:
         merge_data:
           type: object
       required:
+        - tenant_id
         - sender_name
         - sender_email
         - to_name
@@ -4923,20 +5890,10 @@ components:
     CalculateReachRequestDto:
       type: object
       properties:
-        location:
-          type: string
-        age_min:
-          type: number
-        age_max:
-          type: number
-        interests:
+        filters:
           type: array
           items:
-            type: string
-        language:
-          type: string
-        gender:
-          type: string
+            type: object
         objective:
           type: string
         budget:
@@ -5095,56 +6052,8 @@ components:
           description: The name of the automation.
           example: Automation 1
           minLength: 5
-        condition:
-          type: string
-          description: The main trigger for the automation.
-          enum:
-            - contact_added_to_segment
-            - contact_added_to_list
-        list_ids:
-          description: The lists that will trigger this automation.
-          type: array
-          items:
-            type: string
-        segment_ids:
-          description: The segments that will trigger this automation.
-          type: array
-          items:
-            type: string
-        action:
-          type: string
-          description: The action that will be performed when the automation is triggered.
-          enum:
-            - send_email
-        template_id:
-          type: string
-          description: The template that will be used for the email.
-        subject:
-          type: string
-          description: The subject of the email.
-          minLength: 5
-        sender_name:
-          type: string
-          description: The name of the sender.
-          minLength: 3
-        sender_alias:
-          type: string
-          description: The alias of the sender.
-          pattern: /^[a-zA-Z0-9._-]+$/
-        sender_domain_id:
-          type: string
-          description: The domain of the sender.
       required:
         - name
-        - condition
-        - list_ids
-        - segment_ids
-        - action
-        - template_id
-        - subject
-        - sender_name
-        - sender_alias
-        - sender_domain_id
     CreateAutomationResponseDto:
       type: object
       properties:
@@ -5155,57 +6064,13 @@ components:
           description: The name of the automation.
           example: Automation 1
           minLength: 5
-        condition:
-          type: string
-          description: The main trigger for the automation.
-          enum:
-            - contact_added_to_segment
-            - contact_added_to_list
-        list_ids:
-          description: The lists that will trigger this automation.
-          type: array
-          items:
-            type: string
-        segment_ids:
-          description: The segments that will trigger this automation.
-          type: array
-          items:
-            type: string
-        action:
-          type: string
-          description: The action that will be performed when the automation is triggered.
-          enum:
-            - send_email
-        template_id:
-          type: string
-          description: The template that will be used for the email.
-        subject:
-          type: string
-          description: The subject of the email.
-          minLength: 5
-        sender_name:
-          type: string
-          description: The name of the sender.
-          minLength: 3
-        sender_alias:
-          type: string
-          description: The alias of the sender.
-          pattern: /^[a-zA-Z0-9._-]+$/
-        sender_domain_id:
-          type: string
-          description: The domain of the sender.
+        graph:
+          type: object
+          description: The graph/workflow definition for the automation
       required:
         - _id
         - name
-        - condition
-        - list_ids
-        - segment_ids
-        - action
-        - template_id
-        - subject
-        - sender_name
-        - sender_alias
-        - sender_domain_id
+        - graph
     AutomationDto:
       type: object
       properties:
@@ -5214,12 +6079,43 @@ components:
           description: The name of the automation.
           example: Automation 1
           minLength: 5
+        graph:
+          type: object
+          description: The graph/workflow definition for the automation
+      required:
+        - name
+        - graph
+    UpdateAutomationRequestDto:
+      type: object
+      properties:
+        nodeDeleted:
+          type: object
+          properties:
+            id:
+              required: true
+              type: string
+            pathKept:
+              required: true
+              type: boolean
+        name:
+          type: string
+          description: The name of the automation.
+          example: Automation 1
+          minLength: 5
+        graph:
+          type: object
+          description: The graph/workflow definition for the automation
+      required:
+        - nodeDeleted
+    AutomationEntryNodeDto:
+      type: object
+      properties:
         condition:
-          description: The main trigger for the automation.
+          type: string
+          description: The condition that will trigger this automation.
           enum:
             - contact_added_to_segment
             - contact_added_to_list
-          type: string
         list_ids:
           description: The lists that will trigger this automation.
           type: array
@@ -5230,6 +6126,13 @@ components:
           type: array
           items:
             type: string
+      required:
+        - condition
+        - list_ids
+        - segment_ids
+    AutomationActionNodeDto:
+      type: object
+      properties:
         action:
           type: string
           description: The action that will be performed when the automation is triggered.
@@ -5254,63 +6157,54 @@ components:
           type: string
           description: The domain of the sender.
       required:
-        - name
-        - condition
-        - list_ids
-        - segment_ids
         - action
         - template_id
         - subject
         - sender_name
         - sender_alias
         - sender_domain_id
-    UpdateAutomationRequestDto:
+    AutomationBranchNodeDto:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the automation.
-          example: Automation 1
-          minLength: 5
         condition:
           type: string
-          description: The main trigger for the automation.
+          description: The if/else condition.
           enum:
-            - contact_added_to_segment
-            - contact_added_to_list
-        list_ids:
-          description: The lists that will trigger this automation.
-          type: array
-          items:
-            type: string
-        segment_ids:
-          description: The segments that will trigger this automation.
-          type: array
-          items:
-            type: string
-        action:
+            - opened_email
+            - opened_specific_email
+            - clicked_any_link
+        timer_unit:
           type: string
-          description: The action that will be performed when the automation is triggered.
+          description: The timer unit type.
           enum:
-            - send_email
-        template_id:
+            - hours
+            - days
+        timer_value:
+          type: number
+          description: The timer value.
+          minimum: 1
+          maximum: 365
+      required:
+        - condition
+        - timer_unit
+        - timer_value
+    AutomationWaitNodeDto:
+      type: object
+      properties:
+        timer_unit:
           type: string
-          description: The template that will be used for the email.
-        subject:
-          type: string
-          description: The subject of the email.
-          minLength: 5
-        sender_name:
-          type: string
-          description: The name of the sender.
-          minLength: 3
-        sender_alias:
-          type: string
-          description: The alias of the sender.
-          pattern: /^[a-zA-Z0-9._-]+$/
-        sender_domain_id:
-          type: string
-          description: The domain of the sender.
+          description: The timer unit type.
+          enum:
+            - hours
+            - days
+        timer_value:
+          type: number
+          description: The timer value.
+          minimum: 1
+          maximum: 365
+      required:
+        - timer_unit
+        - timer_value
     CreateCustomDomainRequestDto:
       type: object
       properties:
@@ -5455,8 +6349,9 @@ components:
             - number
             - date
             - category
+            - multiple_select
         options:
-          description: The options for a 'category' list
+          description: The options for a 'category' or 'multiple_select' list
           example: '"["Red", "Blue"]"'
           type: array
           items:
@@ -5485,8 +6380,9 @@ components:
             - number
             - date
             - category
+            - multiple_select
         options:
-          description: The options for a 'category' list
+          description: The options for a 'category' or 'multiple_select' list
           example: '"["Red", "Blue"]"'
           type: array
           items:
@@ -5513,9 +6409,10 @@ components:
             - number
             - date
             - category
+            - multiple_select
           type: string
         options:
-          description: The options for a 'category' list
+          description: The options for a 'category' or 'multiple_select' list
           example: '"["Red", "Blue"]"'
           type: array
           items:
@@ -5541,9 +6438,10 @@ components:
             - number
             - date
             - category
+            - multiple_select
           type: string
         options:
-          description: The options for a 'category' list
+          description: The options for a 'category' or 'multiple_select' list
           example: '"["Red", "Blue"]"'
           type: array
           items:
@@ -5626,6 +6524,9 @@ components:
         ai_tools:
           type: boolean
           description: AI features.
+        email_enhancers:
+          type: boolean
+          description: Email Enhancers.
       required:
         - name
         - catchline
@@ -5648,6 +6549,7 @@ components:
         - features_list
         - custom_signup_link
         - ai_tools
+        - email_enhancers
     CreatePlanResponseDto:
       type: object
       properties:
@@ -5724,6 +6626,9 @@ components:
         ai_tools:
           type: boolean
           description: AI features.
+        email_enhancers:
+          type: boolean
+          description: Email Enhancers.
       required:
         - _id
         - name
@@ -5747,6 +6652,7 @@ components:
         - features_list
         - custom_signup_link
         - ai_tools
+        - email_enhancers
     PlanDto:
       type: object
       properties:
@@ -5821,6 +6727,9 @@ components:
         ai_tools:
           type: boolean
           description: AI features.
+        email_enhancers:
+          type: boolean
+          description: Email Enhancers.
       required:
         - name
         - catchline
@@ -5843,6 +6752,7 @@ components:
         - features_list
         - custom_signup_link
         - ai_tools
+        - email_enhancers
     UpdatePlanRequestDto:
       type: object
       properties:
@@ -5917,6 +6827,9 @@ components:
         ai_tools:
           type: boolean
           description: AI features.
+        email_enhancers:
+          type: boolean
+          description: Email Enhancers.
     CommunityDto:
       type: object
       properties:
@@ -5939,7 +6852,6 @@ components:
           type: string
           description: The description of the community
           example: Doe
-          minLength: 10
         short_description:
           type: string
           description: The short description of the community
@@ -6012,7 +6924,6 @@ components:
           type: string
           description: The description of the community
           example: Doe
-          minLength: 10
         short_description:
           type: string
           description: The short description of the community
@@ -6187,6 +7098,438 @@ components:
         - url
         - description
         - published
+    CreateAutodraftRequestDto:
+      type: object
+      properties:
+        url:
+          type: string
+        subject:
+          type: string
+          minLength: 5
+        template_id:
+          type: string
+        flow:
+          type: string
+          enum:
+            - vertical
+            - horizontal
+            - alternating
+        frequency:
+          type: string
+          enum:
+            - ''
+            - daily
+            - monthly
+            - weekly
+        interval:
+          type: string
+        users:
+          type: array
+          items:
+            type: string
+        autosend:
+          type: boolean
+        disappear_in:
+          type: number
+          description: When the email will expire.
+          minimum: 1
+          maximum: 31
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+      required:
+        - url
+        - subject
+        - template_id
+        - flow
+        - frequency
+        - interval
+        - users
+        - autosend
+        - disappear_in
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - target_lists
+        - target_segments
+    CreateAutodraftResponseDto:
+      type: object
+      properties:
+        url:
+          type: string
+        subject:
+          type: string
+          minLength: 5
+        template_id:
+          type: string
+        flow:
+          type: string
+          enum:
+            - vertical
+            - horizontal
+            - alternating
+        frequency:
+          type: string
+          enum:
+            - ''
+            - daily
+            - monthly
+            - weekly
+        interval:
+          type: string
+        users:
+          type: array
+          items:
+            type: string
+        autosend:
+          type: boolean
+        disappear_in:
+          type: number
+          description: When the email will expire.
+          minimum: 1
+          maximum: 31
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+      required:
+        - url
+        - subject
+        - template_id
+        - flow
+        - frequency
+        - interval
+        - users
+        - autosend
+        - disappear_in
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - target_lists
+        - target_segments
+    AutodraftDto:
+      type: object
+      properties:
+        url:
+          type: string
+        subject:
+          type: string
+          minLength: 5
+        template_id:
+          type: string
+        flow:
+          enum:
+            - vertical
+            - horizontal
+            - alternating
+          type: string
+        frequency:
+          enum:
+            - ''
+            - daily
+            - monthly
+            - weekly
+          type: string
+        interval:
+          type: string
+        users:
+          type: array
+          items:
+            type: string
+        autosend:
+          type: boolean
+        disappear_in:
+          type: number
+          description: When the email will expire.
+          minimum: 1
+          maximum: 31
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+      required:
+        - url
+        - subject
+        - template_id
+        - flow
+        - frequency
+        - interval
+        - users
+        - autosend
+        - disappear_in
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - target_lists
+        - target_segments
+    UpdateAutodraftRequestDto:
+      type: object
+      properties:
+        url:
+          type: string
+        subject:
+          type: string
+          minLength: 5
+        template_id:
+          type: string
+        flow:
+          enum:
+            - vertical
+            - horizontal
+            - alternating
+          type: string
+        frequency:
+          enum:
+            - ''
+            - daily
+            - monthly
+            - weekly
+          type: string
+        interval:
+          type: string
+        users:
+          type: array
+          items:
+            type: string
+        autosend:
+          type: boolean
+        disappear_in:
+          type: number
+          description: When the email will expire.
+          minimum: 1
+          maximum: 31
+        sender_name:
+          type: string
+          description: The name of the sender.
+          minLength: 3
+        sender_alias:
+          type: string
+          description: The alias of the sender.
+          pattern: /^[a-zA-Z0-9._-]+$/
+        sender_domain_id:
+          type: string
+          description: The domain of the sender.
+        target_lists:
+          description: The lists of recipients you wish to target.
+          type: array
+          items:
+            type: string
+        target_segments:
+          description: The segments of recipients you wish to target.
+          type: array
+          items:
+            type: string
+      required:
+        - url
+        - subject
+        - template_id
+        - flow
+        - frequency
+        - interval
+        - users
+        - autosend
+        - disappear_in
+        - sender_name
+        - sender_alias
+        - sender_domain_id
+        - target_lists
+        - target_segments
+    CheckEtherMailLikeRequestDto:
+      type: object
+      properties:
+        label:
+          type: string
+      required:
+        - label
+    CreateEmailAirdropDto:
+      type: object
+      properties:
+        _id:
+          type: string
+        email_id:
+          type: string
+        from:
+          type: string
+        chain:
+          type: string
+          enum:
+            - ethereum
+            - polygon
+            - avalanche
+            - celo
+            - fantom
+            - binance
+            - base
+            - arbitrum
+            - sepolia
+            - local
+        token:
+          type: string
+        airdrop_type:
+          type: string
+          enum:
+            - Equity
+            - Fixed
+        token_value_type:
+          type: string
+          enum:
+            - AMOUNT
+            - ID
+        token_type:
+          type: string
+          enum:
+            - Token
+            - NFT
+        amount:
+          type: string
+        surplus:
+          type: string
+        surplus_receiver:
+          type: string
+        transfer_estimate:
+          type: string
+        max_users:
+          type: number
+        token_decimals:
+          type: number
+        latest_mail_iat:
+          type: number
+        remaining_funds_returned:
+          type: boolean
+        funds_return_hashes:
+          type: object
+        fully_funded:
+          type: boolean
+      required:
+        - _id
+        - email_id
+        - from
+        - chain
+        - token
+        - airdrop_type
+        - token_value_type
+        - token_type
+        - amount
+        - surplus
+        - surplus_receiver
+        - transfer_estimate
+        - max_users
+        - token_decimals
+        - latest_mail_iat
+        - remaining_funds_returned
+        - funds_return_hashes
+        - fully_funded
+    ReturnSurplusDto:
+      type: object
+      properties:
+        emailAirdropId:
+          type: string
+      required:
+        - emailAirdropId
+    ChangeSurplusRecipientDto:
+      type: object
+      properties:
+        emailAirdropId:
+          type: string
+        newSurplusRecipient:
+          type: string
+      required:
+        - emailAirdropId
+        - newSurplusRecipient
+    ImportAirdropRecipientsDto:
+      type: object
+      properties:
+        airdrop_id:
+          type: string
+        recipients_records:
+          type: array
+          items:
+            type: object
+      required:
+        - airdrop_id
+        - recipients_records
+    ViralSnippetDto:
+      type: object
+      properties:
+        adId:
+          type: string
+        selector:
+          type: string
+        userId:
+          type: string
+      required:
+        - adId
+        - selector
+        - userId
+    CreateDisappearingEmailDto:
+      type: object
+      properties:
+        email_id:
+          type: string
+        appearing_days:
+          type: number
+      required:
+        - email_id
+        - appearing_days
+    EmtDepositAuthorizationDto:
+      type: object
+      properties:
+        amount:
+          type: string
+      required:
+        - amount
     LoginRequestDto:
       type: object
       properties:
@@ -6268,3 +7611,4 @@ components:
         - reset_token
         - password
         - confirm_password
+
