@@ -1,4 +1,7 @@
 openapi: 3.0.0
+host: "hub-gateway.ethermail.io"
+schemes:
+  - "https"
 paths:
   /v1/analytics/stats:
     get:
