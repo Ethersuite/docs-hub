@@ -5089,6 +5089,14 @@ components:
         tenant_id:
           type: string
           description: Tenant id
+        last_email_opened:
+          format: date-time
+          type: string
+          description: Contact latest email opened date
+        last_email_clicked:
+          format: date-time
+          type: string
+          description: Contact latest email clicked date
         email:
           type: string
           description: The contact's email.
@@ -7090,6 +7098,11 @@ components:
           minLength: 5
         published:
           type: boolean
+        is_sso_implemented:
+          type: boolean
+          description: >-
+            Indicates whether Single Sign-On (SSO) is implemented for the
+            applet.
         name:
           type: string
           minLength: 3
@@ -7098,6 +7111,7 @@ components:
         - url
         - description
         - published
+        - is_sso_implemented
     CreateAutodraftRequestDto:
       type: object
       properties:
@@ -7611,4 +7625,3 @@ components:
         - reset_token
         - password
         - confirm_password
-
