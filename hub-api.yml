@@ -1,7 +1,4 @@
 openapi: 3.0.0
-host: "hub-gateway.ethermail.io"
-schemes:
-  - "https"
 paths:
   /v1/analytics/stats:
     get:
@@ -167,7 +164,12 @@ paths:
   /v1/tenants/{id}/resend-welcome-email:
     get:
       operationId: TenantsController_sendWelcomeEmail
-      parameters: []
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '204':
           description: Resent the welcome email to the tenant.
@@ -443,7 +445,12 @@ paths:
   /v1/users/{id}/send-confirmation-email:
     patch:
       operationId: UsersController_sendConfirmEmail
-      parameters: []
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -561,12 +568,6 @@ paths:
     delete:
       operationId: ContactsController_bulkRemove
       parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BulkDeleteContactsRequestDto'
       responses:
         '204':
           description: Deleted the Contacts.
@@ -612,6 +613,8 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
       tags:
         - contacts
       security:
@@ -1088,11 +1091,6 @@ paths:
     get:
       operationId: EmailsController_findLogs
       parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
         - name: page
           required: false
           in: query
@@ -1774,7 +1772,12 @@ paths:
   /v1/advertising/{id}/force-resend:
     post:
       operationId: AdvertisingController_forceResend
-      parameters: []
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '201':
           description: ''
@@ -2117,12 +2120,6 @@ paths:
           in: path
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddToListRequestDto'
       responses:
         '200':
           description: ''
@@ -4037,7 +4034,12 @@ paths:
   /v1/read-to-earn/{id}:
     get:
       operationId: ReadToEarnController_previewEmail
-      parameters: []
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: Preview email
@@ -4247,9 +4249,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
       type: http
-      name: JWT
       description: Enter JWT token
-      in: header
     api_key:
       type: apiKey
       in: header
@@ -4593,23 +4593,24 @@ components:
           type: object
           properties:
             count:
-              required: true
               type: number
             pages:
-              required: true
               type: number
             starting:
-              required: true
               type: number
             ending:
-              required: true
               type: number
             previous:
-              required: true
               type: boolean
             next:
-              required: true
               type: boolean
+          required:
+            - count
+            - pages
+            - starting
+            - ending
+            - previous
+            - next
       required:
         - records
         - pagination
@@ -4962,7 +4963,7 @@ components:
           type: string
           example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
         lists:
-          description: Lists the contact belongs to.
+          description: The contact belongs to.
           type: array
           items:
             type: string
@@ -5009,7 +5010,7 @@ components:
           type: string
           example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
         lists:
-          description: Lists the contact belongs to.
+          description: The contact belongs to.
           type: array
           items:
             type: string
@@ -5055,7 +5056,7 @@ components:
           type: string
           example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
         lists:
-          description: Lists the contact belongs to.
+          description: The contact belongs to.
           type: array
           items:
             type: string
@@ -5118,7 +5119,7 @@ components:
           type: string
           example: '0x946D14C27C9129C367442E3d0E6a9e70757D5D33'
         lists:
-          description: Lists the contact belongs to.
+          description: The contact belongs to.
           type: array
           items:
             type: string
@@ -6100,11 +6101,12 @@ components:
           type: object
           properties:
             id:
-              required: true
               type: string
             pathKept:
-              required: true
               type: boolean
+          required:
+            - id
+            - pathKept
         name:
           type: string
           description: The name of the automation.
